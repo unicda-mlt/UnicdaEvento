@@ -36,7 +36,7 @@ import com.domain.LocalTopBarController
 import com.flow.main.DiscoverEventScreen
 import com.flow.main.MyEventScreen
 import com.flow.main.SettingScreen
-import com.flow.route.MainFlowRoute
+import com.flow.main.route.MainFlowRoute
 import com.domain.TopBarController
 import kotlinx.coroutines.launch
 

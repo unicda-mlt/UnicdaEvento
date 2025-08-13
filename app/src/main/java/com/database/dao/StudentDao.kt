@@ -1,6 +1,7 @@
 package com.database.dao
 
 import androidx.room.*
+import com.database.entities.Event
 import com.database.entities.Student
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +15,16 @@ interface StudentDao {
 
     @Query("SELECT * FROM students WHERE registration_id = :regId LIMIT 1")
     suspend fun findByRegistrationId(regId: String): Student?
+
+    @Transaction
+    @Query("""
+        SELECT e.* 
+        FROM events AS e
+        INNER JOIN event_student_join AS esj ON esj.event_id = e.id
+        WHERE esj.student_id = :studentId
+        ORDER BY e.start_date DESC
+    """)
+    fun observeSubscribedEvents(studentId: Long): Flow<List<Event>>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(vararg s: Student): List<Long>

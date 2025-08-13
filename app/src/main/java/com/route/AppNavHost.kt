@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.animation.NavigationAnimation
 import com.database.AppDb
-import com.flow.route.mainFlowNavGraph
+import com.flow.main.route.mainFlowNavGraph
 import com.route.main.mainNavGraph
 
 

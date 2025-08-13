@@ -14,14 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import com.database.AppDb
 import com.database.SeedData
 import com.database.instanceAppDbInMemory
-import com.domain.MainViewModel
+import com.domain.viewmodel.MainViewModel
 import com.route.AppNavHost
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
@@ -40,11 +41,12 @@ class MainActivity : ComponentActivity() {
 
         db = instanceAppDbInMemory(applicationContext)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            SeedData.seed(db)
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                SeedData.seed(db)
+            }
+            mainViewModel.stopLoading()
         }
-
-        mainViewModel.stopLoading()
 
         setContent {
             val navController = rememberNavController()

@@ -28,15 +28,6 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE id = :id")
     fun observeWithRefs(id: Long): Flow<EventWithRefs?>
 
-    @Transaction
-    @Query("""
-        SELECT * FROM events 
-        WHERE (:after IS NULL OR start_date >= :after) 
-          AND (:before IS NULL OR end_date <= :before)
-        ORDER BY start_date
-    """)
-    fun observeRange(after: Long?, before: Long?): Flow<List<EventWithRefs>>
-
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(vararg e: Event): List<Long>
 

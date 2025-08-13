@@ -1,4 +1,4 @@
-package com.flow.route
+package com.flow.main.route
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -28,7 +28,7 @@ fun NavGraphBuilder.mainFlowNavGraph(
             arguments = listOf(navArgument("eventId") { type = NavType.LongType })
         ) { backStackEntry ->
             val eventId = backStackEntry.arguments?.getLong("eventId")
-            EventDetailScreen(navController, eventId, db)
+            EventDetailScreen(navController, db, eventId)
         }
     }
 }

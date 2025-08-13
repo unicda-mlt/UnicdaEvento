@@ -22,7 +22,7 @@ fun PrimaryButton(
     shape: Shape = ButtonDefaults.shape,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable (() -> Unit) = {}
 ) {
     Button (
         onClick = onClick,
@@ -41,7 +41,7 @@ fun PrimaryButton(
 
 @Preview(showBackground = true)
 @Composable
-fun PrimaryButton_Preview() {
+private fun PrimaryButton_Preview() {
     MyAppTheme {
         PrimaryButton (
             onClick = {}

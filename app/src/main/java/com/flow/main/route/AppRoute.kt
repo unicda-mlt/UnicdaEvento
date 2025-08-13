@@ -1,4 +1,4 @@
-package com.flow.route
+package com.flow.main.route
 
 import com.route.AppRouteInfo
 

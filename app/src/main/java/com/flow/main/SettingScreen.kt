@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.database.AppDb
-import com.flow.route.MainFlowRoute
+import com.flow.main.route.MainFlowRoute
 
 @Composable
 fun SettingScreen(navController: NavHostController, db: AppDb) {

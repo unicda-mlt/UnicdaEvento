@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -33,7 +30,7 @@ import com.component.PrimaryButton
 import com.component.PrimaryInputSecret
 import com.component.PrimaryInputText
 import com.database.dao.StudentDao
-import com.domain.LoginScreenViewModel
+import com.domain.viewmodel.LoginScreenViewModel
 import com.example.unicdaevento.R
 import com.route.AppNestedRoute
 

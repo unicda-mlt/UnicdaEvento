@@ -45,7 +45,7 @@ fun LoadingIcon(
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchInput_Preview() {
+private fun LoadingIcon_Preview() {
     MyAppTheme {
         Box(
             modifier = Modifier.padding(10.dp)

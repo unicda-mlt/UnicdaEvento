@@ -14,10 +14,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,8 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.component.RandomPicsumThumb
-import com.example.unicdaevento.R
+import com.component.CustomAsyncImage
 import com.main.unicdaevento.MyAppTheme
 import com.util.formatEpochLongToDayName
 import com.util.formatEpochLongToMeridiemTime
@@ -42,20 +43,46 @@ fun EventItem(
     startDate: Long,
     endDate: Long,
     title: String,
+    principalImageUrl: String? = null,
     onClick: () -> Unit = { },
 ) {
-    val textStyleUpThinBlue = TextStyle(
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight(300),
-        fontSize = 18.sp
-    )
-    val textStyleBottomThinBlue = TextStyle(
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight(300),
-        fontSize = 16.sp
-    )
+    val themePrimaryColor = MaterialTheme.colorScheme.primary
 
-    val diffDays = longDiffDaysCalendarAware(startDate, endDate)
+    val textStyleUpThinBlue = remember(themePrimaryColor) {
+        TextStyle(
+            color = themePrimaryColor,
+            fontWeight = FontWeight.W300,
+            fontSize = 18.sp
+        )
+    }
+
+    val textStyleBottomThinBlue = remember(themePrimaryColor) {
+        TextStyle(
+            color = themePrimaryColor,
+            fontWeight = FontWeight(300),
+            fontSize = 16.sp
+        )
+    }
+
+    val diffDays = remember(startDate, endDate) { longDiffDaysCalendarAware(startDate, endDate) }
+
+    val onDayText = remember(startDate) {
+        if (diffDays > 7)
+            formatEpochLongToMonthDay(startDate)
+        else
+            formatEpochLongToDayName(startDate)
+    }
+
+    val startTimeText = remember(startDate) {
+        formatEpochLongToMeridiemTime(startDate)
+    }
+
+    val endTimeText = remember(endDate) {
+        if (diffDays >= 1)
+            formatEpochLongToMonthDayTime(endDate)
+        else
+            formatEpochLongToMeridiemTime(endDate)
+    }
 
     Row(
         modifier = Modifier
@@ -75,13 +102,7 @@ fun EventItem(
             modifier = Modifier.fillMaxWidth(0.55f),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(
-                if (diffDays > 7)
-                    formatEpochLongToMonthDay(startDate)
-                else
-                    formatEpochLongToDayName(startDate),
-                style = textStyleUpThinBlue
-            )
+            Text(onDayText, style = textStyleUpThinBlue)
 
             Text(
                 title,
@@ -98,7 +119,7 @@ fun EventItem(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    formatEpochLongToMeridiemTime(startDate),
+                    startTimeText,
                     style = textStyleBottomThinBlue
                 )
 
@@ -107,36 +128,24 @@ fun EventItem(
                     style = textStyleBottomThinBlue
                 )
 
-                Text(
-                    if (diffDays >= 1)
-                        formatEpochLongToMonthDayTime(endDate)
-                    else
-                        formatEpochLongToMeridiemTime(endDate),
+                Text(endTimeText,
                     style = textStyleBottomThinBlue
                 )
             }
         }
 
-        RandomPicsumThumb(
+        CustomAsyncImage(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .aspectRatio(700f / 400f)
                 .clip(shape = RoundedCornerShape(16.dp)),
-            widthDp = 700,
-            heightDp = 400,
-            errorResId = R.drawable.event_dafault
+            imageUrl = principalImageUrl,
+            width = 700.dp,
+            height = 400.dp
         )
     }
 }
 
-fun Context.dpToNearest10Px(dp: Int): Int {
-    val px = (dp * resources.displayMetrics.density).toInt()
-    return if (px % 10 > 5) {
-        ((px / 10) + 1) * 10
-    } else {
-        (px / 10) * 10
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -149,7 +158,7 @@ private fun EventoItem_Preview() {
             EventItem(
                 startDate = localDateTimeToEpochTime(startDate),
                 endDate = localDateTimeToEpochTime(endDate),
-                title = "Event detail super details"
+                title = "Event detail super details",
             )
         }
     }

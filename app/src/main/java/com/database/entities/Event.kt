@@ -33,6 +33,7 @@ data class Event(
     @ColumnInfo(name = "event_category_id") val eventCategoryId: Long,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "description") val description: String,
+    @ColumnInfo(name = "location") val location: String,
     @ColumnInfo(name = "latitude") val latitude: Double,
     @ColumnInfo(name = "longitude") val longitude: Double,
     @ColumnInfo(name = "start_date") val startDate: Long = System.currentTimeMillis(),
