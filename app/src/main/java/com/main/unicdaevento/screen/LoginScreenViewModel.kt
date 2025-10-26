@@ -1,4 +1,4 @@
-package com.domain.viewmodel
+package com.main.unicdaevento.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

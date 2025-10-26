@@ -1,4 +1,4 @@
-package com.flow.student.screen
+package com.flow.student.screen.discover_event
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +36,7 @@ import com.component.discover_event.EventItem
 import com.component.RangeDatePickerDialog
 import com.database.AppDb
 import com.database.instanceAppDbInMemory
-import com.domain.viewmodel.flow.main.DiscoverEventScreenViewModel
+import com.flow.student.screen.discover_event.DiscoverEventScreenViewModel
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
 import com.util.daoViewModelFactory

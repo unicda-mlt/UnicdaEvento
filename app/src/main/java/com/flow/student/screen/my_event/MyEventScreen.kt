@@ -1,4 +1,4 @@
-package com.flow.student.screen
+package com.flow.student.screen.my_event
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.component.discover_event.EventItem
 import com.database.AppDb
-import com.domain.viewmodel.flow.main.MyEventScreenViewModel
+import com.flow.student.screen.my_event.MyEventScreenViewModel
 import com.flow.student.route.StudentFlowRoute
 import com.util.daoViewModelFactory
 

@@ -1,4 +1,4 @@
-package com.flow.student.screen
+package com.flow.student.screen.event_detail
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -48,7 +48,7 @@ import com.database.entities.Event
 import com.database.entities.EventCategory
 import com.database.entities.EventWithRefs
 import com.database.instanceAppDbInMemory
-import com.domain.viewmodel.flow.main.EventDetailScreenViewModel
+import com.flow.student.screen.event_detail.EventDetailScreenViewModel
 import com.example.unicdaevento.R
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme

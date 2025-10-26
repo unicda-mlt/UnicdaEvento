@@ -33,9 +33,9 @@ import androidx.compose.runtime.setValue
 import com.component.TopBarSimpleBack
 import com.database.AppDb
 import com.domain.LocalTopBarController
-import com.flow.student.screen.DiscoverEventScreen
-import com.flow.student.screen.MyEventScreen
-import com.flow.student.screen.SettingScreen
+import com.flow.student.screen.discover_event.DiscoverEventScreen
+import com.flow.student.screen.my_event.MyEventScreen
+import com.flow.student.screen.setting.SettingScreen
 import com.flow.student.route.StudentFlowRoute
 import com.domain.TopBarController
 import kotlinx.coroutines.launch

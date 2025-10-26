@@ -1,4 +1,4 @@
-package com.domain.viewmodel.flow.main
+package com.flow.student.screen.discover_event
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 
 class DiscoverEventScreenViewModel(
     private val eventDao: EventDao,

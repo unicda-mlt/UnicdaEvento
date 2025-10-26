@@ -8,7 +8,7 @@ import com.route.AppNestedRoute
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.database.AppDb
-import com.flow.student.screen.EventDetailScreen
+import com.flow.student.screen.event_detail.EventDetailScreen
 import com.flow.student.scaffold.MainFlowScaffold
 
 

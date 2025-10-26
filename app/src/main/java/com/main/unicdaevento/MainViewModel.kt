@@ -1,4 +1,4 @@
-package com.domain.viewmodel
+package com.main.unicdaevento
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

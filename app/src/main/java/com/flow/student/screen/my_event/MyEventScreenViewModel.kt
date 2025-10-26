@@ -1,4 +1,4 @@
-package com.domain.viewmodel.flow.main
+package com.flow.student.screen.my_event
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,6 @@ import com.database.entities.Event
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-
 
 class MyEventScreenViewModel(
     private val studentDao: StudentDao,
@@ -18,7 +17,7 @@ class MyEventScreenViewModel(
         studentDao.observeSubscribedEvents(studentId)
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                started = SharingStarted.Companion.WhileSubscribed(5_000),
                 initialValue = emptyList()
             )
 

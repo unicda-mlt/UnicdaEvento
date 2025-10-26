@@ -1,4 +1,4 @@
-package com.main.unicdaevento
+package com.main.unicdaevento.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +30,6 @@ import com.component.PrimaryButton
 import com.component.PrimaryInputSecret
 import com.component.PrimaryInputText
 import com.database.dao.StudentDao
-import com.domain.viewmodel.LoginScreenViewModel
 import com.example.unicdaevento.R
 import com.route.AppNestedRoute
 
@@ -148,7 +147,7 @@ private fun PasswordField(vm: LoginScreenViewModel, enabled: Boolean = true) {
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreen_Preview() {
-    MyAppTheme {
+    _root_ide_package_.com.main.unicdaevento.MyAppTheme {
         LoginScreen(
             navController = rememberNavController()
         )

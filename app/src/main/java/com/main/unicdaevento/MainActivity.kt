@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.database.AppDb
 import com.database.SeedData
 import com.database.instanceAppDbInMemory
-import com.domain.viewmodel.MainViewModel
+import com.main.unicdaevento.MainViewModel
 import com.route.AppNavHost
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
