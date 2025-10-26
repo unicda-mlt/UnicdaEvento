@@ -1,4 +1,4 @@
-package com.flow.main
+package com.flow.student.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -50,7 +50,7 @@ import com.database.entities.EventWithRefs
 import com.database.instanceAppDbInMemory
 import com.domain.viewmodel.flow.main.EventDetailScreenViewModel
 import com.example.unicdaevento.R
-import com.flow.main.route.MainFlowRoute
+import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
 import com.util.daoViewModelFactory
 import com.util.formatEpochLongToFullMonthDayTimeYear
@@ -83,7 +83,7 @@ fun EventDetailScreen(
 
     Scaffold (
         topBar = {
-            TopBarSimpleBack(navController, MainFlowRoute.EVENT_DETAIL.title)
+            TopBarSimpleBack(navController, StudentFlowRoute.EVENT_DETAIL.title)
         }
     ) { innerPadding ->
         ScreenContent(

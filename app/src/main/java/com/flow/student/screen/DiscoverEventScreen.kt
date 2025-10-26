@@ -1,4 +1,4 @@
-package com.flow.main
+package com.flow.student.screen
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,7 @@ import com.component.RangeDatePickerDialog
 import com.database.AppDb
 import com.database.instanceAppDbInMemory
 import com.domain.viewmodel.flow.main.DiscoverEventScreenViewModel
-import com.flow.main.route.MainFlowRoute
+import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
 import com.util.daoViewModelFactory
 
@@ -139,10 +139,10 @@ fun DiscoverEventScreen(
             { event ->
                 val navigateToDetail = remember(event.id) {
                     {
-                        navController.navigate(MainFlowRoute.EVENT_DETAIL.create(event.id)) {
+                        navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
                             launchSingleTop = true
                             restoreState = true
-                            popUpTo(MainFlowRoute.HOME.route) { saveState = true }
+                            popUpTo(StudentFlowRoute.HOME.route) { saveState = true }
                         }
                     }
                 }

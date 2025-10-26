@@ -1,4 +1,4 @@
-package com.flow.scaffold
+package com.flow.student.scaffold
 
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,10 +33,10 @@ import androidx.compose.runtime.setValue
 import com.component.TopBarSimpleBack
 import com.database.AppDb
 import com.domain.LocalTopBarController
-import com.flow.main.DiscoverEventScreen
-import com.flow.main.MyEventScreen
-import com.flow.main.SettingScreen
-import com.flow.main.route.MainFlowRoute
+import com.flow.student.screen.DiscoverEventScreen
+import com.flow.student.screen.MyEventScreen
+import com.flow.student.screen.SettingScreen
+import com.flow.student.route.StudentFlowRoute
 import com.domain.TopBarController
 import kotlinx.coroutines.launch
 
@@ -49,9 +49,9 @@ fun MainFlowScaffold(
     val controller = remember { TopBarController() }
 
     val tabs = listOf(
-        MainFlowRoute.DISCOVER_EVENT.route,
-        MainFlowRoute.MY_EVENT.route,
-        MainFlowRoute.SETTING.route
+        StudentFlowRoute.DISCOVER_EVENT.route,
+        StudentFlowRoute.MY_EVENT.route,
+        StudentFlowRoute.SETTING.route
     )
 
     val pagerState = rememberPagerState(
@@ -122,13 +122,13 @@ fun MainFlowScaffold(
                         startDestination = tabs[page],
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        composable(MainFlowRoute.DISCOVER_EVENT.route) {
+                        composable(StudentFlowRoute.DISCOVER_EVENT.route) {
                             DiscoverEventScreen(navHostController, db)
                         }
-                        composable(MainFlowRoute.MY_EVENT.route) {
+                        composable(StudentFlowRoute.MY_EVENT.route) {
                             MyEventScreen(navHostController, db)
                         }
-                        composable(MainFlowRoute.SETTING.route) {
+                        composable(StudentFlowRoute.SETTING.route) {
                             SettingScreen(navHostController, db)
                         }
                     }
@@ -139,15 +139,15 @@ fun MainFlowScaffold(
 }
 
 private fun titleFromRoute(route: String): String {
-    return MainFlowRoute.fromRoute(route)?.title ?: route
+    return StudentFlowRoute.fromRoute(route)?.title ?: route
 }
 
 @Composable
 private fun TabIcon(route: String) {
-    val icon = when(MainFlowRoute.fromRoute(route)) {
-        MainFlowRoute.DISCOVER_EVENT -> Icons.Filled.Home
-        MainFlowRoute.MY_EVENT -> Icons.Filled.CalendarMonth
-        MainFlowRoute.SETTING -> Icons.Filled.Settings
+    val icon = when(StudentFlowRoute.fromRoute(route)) {
+        StudentFlowRoute.DISCOVER_EVENT -> Icons.Filled.Home
+        StudentFlowRoute.MY_EVENT -> Icons.Filled.CalendarMonth
+        StudentFlowRoute.SETTING -> Icons.Filled.Settings
         else -> Icons.Filled.Android
     }
 

@@ -43,7 +43,7 @@ fun LoginScreen(
     val state by vm.uiState.collectAsStateWithLifecycle()
 
     if (state.success && state.error.isNullOrEmpty()) {
-        navController.navigate(AppNestedRoute.MainFlow.route) {
+        navController.navigate(AppNestedRoute.StudentFlow.route) {
             popUpTo(AppNestedRoute.Main.route) { inclusive = true }
             launchSingleTop = true
         }

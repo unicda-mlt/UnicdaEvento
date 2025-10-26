@@ -1,4 +1,4 @@
-package com.flow.main
+package com.flow.student.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.database.AppDb
-import com.flow.main.route.MainFlowRoute
+import com.flow.student.route.StudentFlowRoute
 
 @Composable
 fun SettingScreen(navController: NavHostController, db: AppDb) {
@@ -16,6 +16,6 @@ fun SettingScreen(navController: NavHostController, db: AppDb) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(MainFlowRoute.SETTING.title)
+        Text(StudentFlowRoute.SETTING.title)
     }
 }

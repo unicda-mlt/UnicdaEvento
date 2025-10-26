@@ -1,4 +1,4 @@
-package com.flow.main
+package com.flow.student.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 import com.component.discover_event.EventItem
 import com.database.AppDb
 import com.domain.viewmodel.flow.main.MyEventScreenViewModel
-import com.flow.main.route.MainFlowRoute
+import com.flow.student.route.StudentFlowRoute
 import com.util.daoViewModelFactory
 
 @Composable
@@ -46,10 +46,10 @@ fun MyEventScreen(
             { event ->
                 val navigateToDetail = remember(event.id) {
                     {
-                        navController.navigate(MainFlowRoute.EVENT_DETAIL.create(event.id)) {
+                        navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
                             launchSingleTop = true
                             restoreState = true
-                            popUpTo(MainFlowRoute.HOME.route) { saveState = true }
+                            popUpTo(StudentFlowRoute.HOME.route) { saveState = true }
                         }
                     }
                 }
