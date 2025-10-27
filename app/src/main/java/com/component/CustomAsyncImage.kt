@@ -65,12 +65,6 @@ fun CustomAsyncImage(
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        Image(
-            painter = painter,
-            contentDescription,
-            contentScale = contentScale
-        )
-
         when (painter.state) {
             is AsyncImagePainter.State.Loading -> {
                 CustomCircularProgressIndicator()
@@ -80,6 +74,12 @@ fun CustomAsyncImage(
             }
             else -> Unit
         }
+
+        Image(
+            painter = painter,
+            contentDescription = contentDescription,
+            contentScale = contentScale
+        )
     }
 }
 
