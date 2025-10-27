@@ -1,4 +1,4 @@
-package com.domain.auth
+package com.auth
 
 import dagger.Binds
 import dagger.Module

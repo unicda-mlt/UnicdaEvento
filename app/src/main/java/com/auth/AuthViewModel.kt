@@ -1,6 +1,7 @@
-package com.domain.auth
+package com.auth
 
 import android.app.Activity
+import android.util.Patterns
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.ViewModel
@@ -45,7 +46,7 @@ class AuthViewModel @Inject constructor(
     val state: StateFlow<UiState> = _state
 
     private fun String.isValidEmail(): Boolean =
-        android.util.Patterns.EMAIL_ADDRESS.matcher(this.trim()).matches()
+        Patterns.EMAIL_ADDRESS.matcher(this.trim()).matches()
 
     private fun handleEmailCredentialErrorMessage(e: Throwable, defaultMessage: String): String {
         val msg = when (e) {

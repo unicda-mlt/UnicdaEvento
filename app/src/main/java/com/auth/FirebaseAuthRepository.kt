@@ -1,4 +1,4 @@
-package com.domain.auth
+package com.auth
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

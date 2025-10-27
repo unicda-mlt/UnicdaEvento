@@ -1,4 +1,4 @@
-package com.domain.auth
+package com.auth
 
 import android.content.Context
 import androidx.credentials.CredentialManager

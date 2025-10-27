@@ -30,9 +30,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.component.LoadingOverlay
-import com.domain.auth.AuthViewModel
+import com.auth.AuthViewModel
 import com.main.unicdaevento.MyAppTheme
 import com.route.AppNestedRoute
 
