@@ -36,7 +36,6 @@ import com.component.discover_event.EventItem
 import com.component.RangeDatePickerDialog
 import com.database.AppDb
 import com.database.instanceAppDbInMemory
-import com.flow.student.screen.discover_event.DiscoverEventScreenViewModel
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
 import com.util.daoViewModelFactory

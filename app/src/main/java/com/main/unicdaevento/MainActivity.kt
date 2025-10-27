@@ -19,11 +19,13 @@ import com.database.SeedData
 import com.database.instanceAppDbInMemory
 import com.main.unicdaevento.MainViewModel
 import com.route.AppNavHost
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     lateinit var db: AppDb

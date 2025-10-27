@@ -129,7 +129,7 @@ fun MainFlowScaffold(
                             MyEventScreen(navHostController, db)
                         }
                         composable(StudentFlowRoute.SETTING.route) {
-                            SettingScreen(navHostController, db)
+                            SettingScreen(navHostController)
                         }
                     }
                 }

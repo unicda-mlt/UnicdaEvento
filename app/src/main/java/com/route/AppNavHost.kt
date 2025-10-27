@@ -22,7 +22,7 @@ fun AppNavHost(
         popEnterTransition = { NavigationAnimation.SlideInHorizontalPopEnter },
         popExitTransition = { NavigationAnimation.SlideInHorizontalPopExit }
     ) {
-        mainNavGraph(navController, db)
+        mainNavGraph(navController)
         studentFlowNavGraph(navController, db)
     }
 }

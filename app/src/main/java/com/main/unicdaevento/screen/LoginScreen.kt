@@ -1,6 +1,11 @@
 package com.main.unicdaevento.screen
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,26 +15,32 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.component.LoadingIcon
+import com.component.LoadingOverlay
 import com.component.PrimaryButton
 import com.component.PrimaryInputSecret
 import com.component.PrimaryInputText
-import com.database.dao.StudentDao
+import com.domain.auth.AuthViewModel
 import com.example.unicdaevento.R
 import com.route.AppNestedRoute
 
@@ -37,26 +48,82 @@ import com.route.AppNestedRoute
 fun LoginScreen(
     navController: NavHostController,
     vm: LoginScreenViewModel = viewModel(),
-    studentDao: StudentDao? = null
+    authVM: AuthViewModel = hiltViewModel(),
 ) {
-    val state by vm.uiState.collectAsStateWithLifecycle()
+    val authState by authVM.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val activity = remember(context) { context as? Activity }
+    val isLoading = authState is AuthViewModel.UiState.Loading
 
-    if (state.success && state.error.isNullOrEmpty()) {
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthViewModel.UiState.Error -> {
+                Toast.makeText(
+                    context,
+                    (authState as AuthViewModel.UiState.Error).message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            is AuthViewModel.UiState.EmailResetPasswordSent -> {
+                Toast.makeText(
+                    context,
+                    "Se ha enviado un correo a su correo eléctronico para restablecer la contraseña",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> {}
+        }
+    }
+
+    LoadingOverlay(isLoading)
+
+    if (authVM.currentUserOrNull() !== null) {
         navController.navigate(AppNestedRoute.StudentFlow.route) {
             popUpTo(AppNestedRoute.Main.route) { inclusive = true }
             launchSingleTop = true
         }
     }
+    else {
+        ScreenContent(
+            vm = vm,
+            isLoading = isLoading,
+            onEmailChange = vm::setEmail,
+            onPasswordChange = vm::setPassword,
+            onSignInEmail = authVM::signInEmail,
+            onSignUpEmail = authVM::signUpEmail,
+            onSignInGoogle = {
+                if (activity != null) {
+                    authVM.signInGoogle(activity)
+                }
+            },
+            onSendEmailPasswordReset = authVM::sendPasswordReset
+        )
+    }
+}
 
+@Composable
+private fun ScreenContent (
+    vm: LoginScreenViewModel,
+    isLoading: Boolean,
+    onEmailChange: (value: String) -> Unit,
+    onPasswordChange: (value: String) -> Unit,
+    onSignInEmail: (email: String, password: String) -> Unit,
+    onSignUpEmail: (email: String, password: String) -> Unit,
+    onSignInGoogle: () -> Unit,
+    onSendEmailPasswordReset: (email: String) -> Unit,
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Box (
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.85f),
-            contentAlignment = Alignment.Center,
+        Column (
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ){
             Column (
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .fillMaxHeight(0.85f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -64,38 +131,73 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(50.dp))
 
-                RegistrationIdField(vm, !state.loading)
-
-                Spacer(Modifier.height(10.dp))
-
-                PasswordField(vm, !state.loading)
-
-                Spacer(Modifier.height(30.dp))
-
-                PrimaryButton(
-                    onClick = {
-                        if (studentDao != null) {
-                            vm.login(studentDao)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(0.8f),
-                    contentPadding = PaddingValues(
-                        vertical = 15.dp
-                    ),
-                    enabled = !state.loading
+                Column (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    if (state.loading) {
-                        LoadingIcon(
-                            modifier = Modifier.size(33.dp)
-                        )
-                    }
-                    else {
-                        Text(
-                            text = "Ingresar",
-                            fontSize = 24.sp
-                        )
-                    }
+                    val email by vm.email.collectAsStateWithLifecycle()
+                    val password by vm.password.collectAsStateWithLifecycle()
+
+                    EmailField(value = email, onValueChange = onEmailChange, enabled = !isLoading)
+
+                    Spacer(Modifier.height(10.dp))
+
+                    PasswordField(value = password, onValueChange = onPasswordChange, enabled = !isLoading)
+
+                    Spacer(Modifier.height(30.dp))
+
+                    ScreenButton(
+                        text = "Ingresar",
+                        onClick = { onSignInEmail(email, password) },
+                        enabled = !isLoading
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+                    ScreenButton(
+                        text = "Registrate",
+                        onClick = { onSignUpEmail(email, password) },
+                        enabled = !isLoading
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+                    ScreenButton(
+                        text = "Google",
+                        onClick = onSignInGoogle,
+                        enabled = !isLoading
+                    )
                 }
+            }
+
+            Spacer(Modifier.fillMaxHeight(0.6f))
+
+            Column (
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed by interactionSource.collectIsPressedAsState()
+
+                val normalColor = MaterialTheme.colorScheme.primary
+                val pressedColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+
+                Text(
+                    text = "Restablecer contraseña",
+                    color = if (isPressed) pressedColor else normalColor,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            onSendEmailPasswordReset(vm.email.value)
+                        }
+                        .padding(4.dp)
+                )
             }
         }
     }
@@ -115,27 +217,31 @@ private fun Logo() {
 }
 
 @Composable
-private fun RegistrationIdField(vm: LoginScreenViewModel, enabled: Boolean = true) {
-    val studentRegistrationId by vm.studentRegistrationId.collectAsStateWithLifecycle()
-
+private fun EmailField(
+    value: String,
+    onValueChange: (value: String) -> Unit,
+    enabled: Boolean = true
+) {
     PrimaryInputText(
-        value = studentRegistrationId,
-        onValueChange = vm::setStudentRegistrationId,
+        value = value,
+        onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
         placeholder = {
-            Text("Matrícula con guiones")
+            Text("Correo eléctronico")
         },
         enabled = enabled,
     )
 }
 
 @Composable
-private fun PasswordField(vm: LoginScreenViewModel, enabled: Boolean = true) {
-    val password by vm.password.collectAsStateWithLifecycle()
-
+private fun PasswordField(
+    value: String,
+    onValueChange: (value: String) -> Unit,
+    enabled: Boolean = true
+) {
     PrimaryInputSecret(
-        value = password,
-        onValueChange = vm::setPassword,
+        value = value,
+        onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
         placeholder = {
             Text("Contraseña")
@@ -144,12 +250,40 @@ private fun PasswordField(vm: LoginScreenViewModel, enabled: Boolean = true) {
     )
 }
 
+@Composable
+private fun ScreenButton(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean
+) {
+    PrimaryButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(0.8f),
+        contentPadding = PaddingValues(
+            vertical = 15.dp
+        ),
+        enabled = enabled
+    ) {
+        Text(
+            text = text,
+            fontSize = 24.sp
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreen_Preview() {
     _root_ide_package_.com.main.unicdaevento.MyAppTheme {
-        LoginScreen(
-            navController = rememberNavController()
+        ScreenContent(
+            vm = viewModel(),
+            isLoading = false,
+            onEmailChange = { },
+            onPasswordChange = { },
+            onSignInEmail = { _, _ -> },
+            onSignUpEmail = { _, _ -> },
+            onSignInGoogle = { },
+            onSendEmailPasswordReset = { }
         )
     }
 }

@@ -10,8 +10,7 @@ import com.route.AppNestedRoute
 
 
 fun NavGraphBuilder.mainNavGraph(
-    navController: NavHostController,
-    db: AppDb
+    navController: NavHostController
 ) {
     navigation(
         route = AppNestedRoute.Main.route,
@@ -20,7 +19,7 @@ fun NavGraphBuilder.mainNavGraph(
         composable(
             MainAppRoute.Login.route
         ) {
-            LoginScreen(navController, studentDao = db.studentDao())
+            LoginScreen(navController)
         }
     }
 }
