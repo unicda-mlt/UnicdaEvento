@@ -120,6 +120,7 @@ private fun ScreenContent(
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f)
                 .clipToBounds(),
+            horizontalAlignment = Alignment.CenterHorizontally,
             imageUrl = event?.principalImage
         )
 
