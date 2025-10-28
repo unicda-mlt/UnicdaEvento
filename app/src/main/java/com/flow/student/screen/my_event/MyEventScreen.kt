@@ -1,5 +1,6 @@
 package com.flow.student.screen.my_event
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,30 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.component.CenterPopupMenuDialog
+import com.component.MenuOption
 import com.component.discover_event.EventItem
-import com.database.AppDb
-import com.flow.student.screen.my_event.MyEventScreenViewModel
 import com.flow.student.route.StudentFlowRoute
-import com.util.daoViewModelFactory
 
 @Composable
 fun MyEventScreen(
     navController: NavHostController,
-    db: AppDb
+    vm: MyEventScreenViewModel = hiltViewModel()
 ) {
-    val vm: MyEventScreenViewModel = viewModel(
-        factory = daoViewModelFactory(
-            db = db,
-            create = { MyEventScreenViewModel(
-                studentDao = db.studentDao(),
-                studentId = 1,
-            ) }
-        )
-    )
-
     val events by vm.events.collectAsStateWithLifecycle(initialValue = emptyList())
 
     Column(
@@ -40,10 +30,12 @@ fun MyEventScreen(
         LazyColumn {
             items(
                 items = events,
-                key = { it.id },
+                key = { it.event.id },
                 contentType = { "event" }
             )
-            { event ->
+            { userEvent ->
+                val event = userEvent.event
+
                 val navigateToDetail = remember(event.id) {
                     {
                         navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
@@ -59,9 +51,32 @@ fun MyEventScreen(
                     endDate = event.endDate,
                     title = event.title,
                     principalImageUrl = event.principalImage,
-                    onClick = navigateToDetail
+                    onClick = navigateToDetail,
+                    onLongClick = {
+                        vm.setSelectedEventId(userEvent.id)
+                    }
                 )
             }
         }
+    }
+
+    Box {
+        val selectedEventId by vm.selectedEventId.collectAsStateWithLifecycle()
+
+        val opts = listOf(
+            MenuOption(value = selectedEventId, label = "Unjoin", isDestructive = true)
+        )
+
+        CenterPopupMenuDialog(
+            visible = selectedEventId != null,
+            options = opts,
+            title = "Options",
+            onDismiss = { vm.setSelectedEventId(null) },
+            onSuccess = { value ->
+                if (value != null) {
+                    vm.unjoinEvent(value)
+                }
+            }
+        )
     }
 }

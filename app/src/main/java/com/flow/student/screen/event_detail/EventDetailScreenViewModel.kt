@@ -2,15 +2,15 @@ package com.flow.student.screen.event_detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.database.dao.EventDao
-import com.database.dao.EventStudentDao
-import com.database.entities.EventStudentCrossRef
-import com.database.entities.EventWithRefs
+import com.domain.entities.EventWithRefs
+import com.repository.event.EventRepository
+import com.repository.user.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -19,11 +19,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EventDetailScreenViewModel(
-    private val eventDao: EventDao,
-    private val eventStudentDao: EventStudentDao,
-    private val studentId: Long,
+
+@HiltViewModel
+class EventDetailScreenViewModel @Inject constructor(
+    private val eventRepository: EventRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     data class UIState(
         val loading: Boolean = false,
@@ -31,7 +33,7 @@ class EventDetailScreenViewModel(
         val error: String? = null
     )
 
-    private val eventId = MutableStateFlow<Long?>(null)
+    private val eventId = MutableStateFlow<String?>(null)
 
     private val _ui = MutableStateFlow(UIState())
     val uiState: StateFlow<UIState> = _ui
@@ -41,12 +43,24 @@ class EventDetailScreenViewModel(
         eventId
             .filterNotNull()
             .distinctUntilChanged()
-            .flatMapLatest { id -> eventDao.observeWithRefs(id) }
+            .flatMapLatest { id -> eventRepository.observeWithRefs(id) }
             .stateIn(
                 viewModelScope,
                 SharingStarted.Companion.WhileSubscribed(5_000),
                 null
             )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val isJoinedEvent: StateFlow<Boolean> = eventId
+        .filterNotNull()
+        .distinctUntilChanged()
+        .flatMapLatest { id -> userRepository.isJoinedEventFlow(id) }
+        .catch { emit(false) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
 
     init {
         eventId
@@ -59,12 +73,12 @@ class EventDetailScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun loadEvent(id: Long) {
+    fun loadEvent(id: String) {
         _ui.update { it.copy(loading = true, error = null) }
         eventId.value = id
     }
 
-    fun joinStudent() {
+    fun joinEvent() {
         val id = eventId.value ?: run {
             _ui.update { it.copy(error = "No event selected") }
             return
@@ -75,13 +89,7 @@ class EventDetailScreenViewModel(
         viewModelScope.launch {
             _ui.update { it.copy(joining = true, error = null) }
             try {
-                // MUST BE DELETED IN PRODUCTION //
-                delay(1_000)
-                // MUST BE DELETED IN PRODUCTION //
-
-                eventStudentDao.insert(
-                    EventStudentCrossRef(eventId = id, studentId = studentId)
-                )
+                userRepository.joinEvent(id)
             } catch (e: Exception) {
                 _ui.update { it.copy(error = "Error trying to join event") }
             } finally {

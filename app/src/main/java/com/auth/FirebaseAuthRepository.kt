@@ -5,11 +5,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 
 
-class FirebaseAuthRepository @Inject constructor(
+class FirebaseAuthRepository(
     private val auth: FirebaseAuth
 ) : AuthRepository {
 

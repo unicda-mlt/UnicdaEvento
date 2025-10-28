@@ -31,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import com.component.TopBarSimpleBack
-import com.database.AppDb
 import com.domain.LocalTopBarController
 import com.flow.student.screen.discover_event.DiscoverEventScreen
 import com.flow.student.screen.my_event.MyEventScreen
@@ -43,8 +42,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainFlowScaffold(
-    navHostController: NavHostController,
-    db: AppDb
+    navHostController: NavHostController
 ) {
     val controller = remember { TopBarController() }
 
@@ -123,10 +121,10 @@ fun MainFlowScaffold(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable(StudentFlowRoute.DISCOVER_EVENT.route) {
-                            DiscoverEventScreen(navHostController, db)
+                            DiscoverEventScreen(navHostController)
                         }
                         composable(StudentFlowRoute.MY_EVENT.route) {
-                            MyEventScreen(navHostController, db)
+                            MyEventScreen(navHostController)
                         }
                         composable(StudentFlowRoute.SETTING.route) {
                             SettingScreen(navHostController)

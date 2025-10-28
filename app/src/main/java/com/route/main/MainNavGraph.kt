@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.database.AppDb
 import com.main.unicdaevento.screen.LoginScreen
 import com.route.AppNestedRoute
 

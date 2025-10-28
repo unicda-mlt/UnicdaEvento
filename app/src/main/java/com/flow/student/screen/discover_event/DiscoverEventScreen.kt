@@ -21,11 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.component.Option
@@ -34,43 +33,15 @@ import com.component.OptionPickerButton
 import com.component.SearchInput
 import com.component.discover_event.EventItem
 import com.component.RangeDatePickerDialog
-import com.database.AppDb
-import com.database.instanceAppDbInMemory
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
-import com.util.daoViewModelFactory
 
 @Composable
 fun DiscoverEventScreen(
     navController: NavHostController,
-    db: AppDb,
+    vm: DiscoverEventScreenViewModel = hiltViewModel()
 ) {
-    val vm: DiscoverEventScreenViewModel = viewModel(
-        factory = daoViewModelFactory(
-            db = db,
-            create = { DiscoverEventScreenViewModel(
-                eventDao = it.eventDao(),
-                departmentDao = it.departmentDao(),
-                eventCategoryDao = it.eventCategoryDao()
-            ) }
-        )
-    )
-
-    val ui by vm.ui.collectAsStateWithLifecycle()
-    val events by vm.events.collectAsStateWithLifecycle(initialValue = emptyList())
-    val departments by vm.departments.collectAsStateWithLifecycle()
-    val eventCategories by vm.eventCategories.collectAsStateWithLifecycle()
-    val showRangeCalendar = remember { mutableStateOf(false) }
-
-    val departmentOptions = remember(departments) {
-        listOf<Option<Long?>>(Option(null, "All")) +
-                departments.map { item -> Option<Long?>(item.id, item.name) }
-    }
-
-    val eventCategoryOptions = remember(eventCategories) {
-        listOf<Option<Long?>>(Option(null, "All")) +
-                eventCategories.map { item -> Option<Long?>(item.id, item.name) }
-    }
+    val params by vm.params.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         withFrameNanos {  }
@@ -90,7 +61,7 @@ fun DiscoverEventScreen(
             )
         ) {
             SearchInput(
-                value = ui.search,
+                value = params.search,
                 onValueChange = { vm.updateSearch(it) },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -104,18 +75,35 @@ fun DiscoverEventScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RangeDatePickerButton(
-                    showCalendar = showRangeCalendar,
-                    initialStartUtcMillis = ui.fromDate,
-                    initialEndUtcMillis = ui.toDate,
-                    onDateSelected = vm::setRangeDate
-                )
+                val departments by vm.departments.collectAsStateWithLifecycle()
+                val eventCategories by vm.eventCategories.collectAsStateWithLifecycle()
+
+                val departmentOptions = remember(departments) {
+                    listOf<Option<String?>>(Option(null, "All")) +
+                            departments.map { item -> Option<String?>(item.id, item.name) }
+                }
+
+                val eventCategoryOptions = remember(eventCategories) {
+                    listOf<Option<String?>>(Option(null, "All")) +
+                            eventCategories.map { item -> Option<String?>(item.id, item.name) }
+                }
+
+                Box {
+                    val showRangeCalendar = remember { mutableStateOf(false) }
+
+                    RangeDatePickerButton(
+                        showCalendar = showRangeCalendar,
+                        initialStartUtcMillis = params.fromDate,
+                        initialEndUtcMillis = params.toDate,
+                        onDateSelected = vm::setRangeDate
+                    )
+                }
 
                 OptionPicker(
                     modifier = Modifier.width(150.dp),
                     title = "Deparments",
                     options = departmentOptions,
-                    selected = ui.departmentId,
+                    selected = params.departmentId,
                     onSelect = vm::setDepartmentId
                 )
 
@@ -123,38 +111,43 @@ fun DiscoverEventScreen(
                     modifier = Modifier.width(150.dp),
                     title = "Categories",
                     options = eventCategoryOptions,
-                    selected = ui.categoryEventId,
+                    selected = params.categoryEventId,
                     onSelect = vm::setCategoryId
                 )
             }
         }
 
-        LazyColumn {
-            items(
-                items = events,
-                key = { it.id },
-                contentType = { "event" }
-            )
-            { event ->
-                val navigateToDetail = remember(event.id) {
-                    {
-                        navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(StudentFlowRoute.HOME.route) { saveState = true }
+        Box {
+            val events by vm.events.collectAsStateWithLifecycle(initialValue = emptyList())
+
+            LazyColumn {
+                items(
+                    items = events,
+                    key = { it.id },
+                    contentType = { "event" }
+                )
+                { event ->
+                    val navigateToDetail = remember(event.id) {
+                        {
+                            navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(StudentFlowRoute.HOME.route) { saveState = true }
+                            }
                         }
                     }
-                }
 
-                EventItem(
-                    startDate = event.startDate,
-                    endDate = event.endDate,
-                    title = event.title,
-                    principalImageUrl = event.principalImage,
-                    onClick = navigateToDetail
-                )
+                    EventItem(
+                        startDate = event.startDate,
+                        endDate = event.endDate,
+                        title = event.title,
+                        principalImageUrl = event.principalImage,
+                        onClick = navigateToDetail
+                    )
+                }
             }
         }
+
     }
 }
 
@@ -190,10 +183,7 @@ private fun RangeDatePickerButton(
 @Preview(showBackground = true)
 @Composable
 private fun DiscoverEventScreen_Preview() {
-    val context = LocalContext.current
-    val db = remember { instanceAppDbInMemory(context) }
-
     MyAppTheme {
-        DiscoverEventScreen(navController = rememberNavController(), db)
+        DiscoverEventScreen(navController = rememberNavController())
     }
 }

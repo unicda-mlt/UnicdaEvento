@@ -4,15 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.animation.NavigationAnimation
-import com.database.AppDb
 import com.flow.student.route.studentFlowNavGraph
 import com.route.main.mainNavGraph
 
 
 @Composable
 fun AppNavHost(
-    navController: NavHostController,
-    db: AppDb
+    navController: NavHostController
 ) {
     NavHost(
         navController,
@@ -23,6 +21,6 @@ fun AppNavHost(
         popExitTransition = { NavigationAnimation.SlideInHorizontalPopExit }
     ) {
         mainNavGraph(navController)
-        studentFlowNavGraph(navController, db)
+        studentFlowNavGraph(navController)
     }
 }

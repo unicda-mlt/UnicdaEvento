@@ -14,22 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.database.AppDb
-import com.database.SeedData
-import com.database.instanceAppDbInMemory
-import com.main.unicdaevento.MainViewModel
 import com.route.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
-    lateinit var db: AppDb
-        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -41,12 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        db = instanceAppDbInMemory(applicationContext)
-
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                SeedData.seed(db)
-            }
             mainViewModel.stopLoading()
         }
 
@@ -61,7 +48,7 @@ class MainActivity : ComponentActivity() {
                             .padding(outerPadding)
                             .consumeWindowInsets(outerPadding)
                     ) {
-                        AppNavHost(navController, db)
+                        AppNavHost(navController)
                     }
                 }
             }

@@ -1,6 +1,5 @@
 package com.component.discover_event
 
-import android.content.Context
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +43,7 @@ fun EventItem(
     title: String,
     principalImageUrl: String? = null,
     onClick: () -> Unit = { },
+    onLongClick: () -> Unit = { }
 ) {
     val themePrimaryColor = MaterialTheme.colorScheme.primary
 
@@ -89,7 +88,8 @@ fun EventItem(
             .fillMaxWidth()
             .height(100.dp)
             .combinedClickable(
-                onClick = { onClick() },
+                onClick = onClick,
+                onLongClick = onLongClick,
                 role = Role.Button
             )
             .padding(

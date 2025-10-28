@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -34,48 +33,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.component.CustomAsyncImage
 import com.component.CustomCircularProgressIndicator
 import com.component.GoogleMapBox
 import com.component.PrimaryButton
 import com.component.TopBarSimpleBack
-import com.database.AppDb
-import com.database.entities.Department
-import com.database.entities.Event
-import com.database.entities.EventCategory
-import com.database.entities.EventWithRefs
-import com.database.instanceAppDbInMemory
-import com.flow.student.screen.event_detail.EventDetailScreenViewModel
+import com.domain.entities.Department
+import com.domain.entities.Event
+import com.domain.entities.EventCategory
+import com.domain.entities.EventWithRefs
 import com.example.unicdaevento.R
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
-import com.util.daoViewModelFactory
 import com.util.formatEpochLongToFullMonthDayTimeYear
 
 
 @Composable
 fun EventDetailScreen(
     navController: NavHostController,
-    db: AppDb,
-    eventId: Long? = null,
+    eventId: String? = null,
+    vm: EventDetailScreenViewModel = hiltViewModel(),
 ) {
-    val vm: EventDetailScreenViewModel = viewModel(
-        factory = daoViewModelFactory(
-            db = db,
-            create = { EventDetailScreenViewModel(
-                studentId = 1L,
-                eventDao = it.eventDao(),
-                eventStudentDao = it.eventStudentDao()
-            ) }
-        )
-    )
-
     val ui by vm.uiState.collectAsStateWithLifecycle()
     val eventData by vm.event.collectAsStateWithLifecycle()
-    val joinEvent = vm::joinStudent
+    val isJoinedEvent by vm.isJoinedEvent.collectAsStateWithLifecycle()
 
     LaunchedEffect(eventId) {
         eventId?.let(vm::loadEvent)
@@ -89,7 +73,8 @@ fun EventDetailScreen(
         ScreenContent(
             ui = ui,
             data = eventData,
-            joinEvent = joinEvent,
+            joinEvent = vm::joinEvent,
+            isJoinedEvent = isJoinedEvent,
             innerPadding = innerPadding
         )
     }
@@ -99,6 +84,7 @@ fun EventDetailScreen(
 private fun ScreenContent(
     ui: EventDetailScreenViewModel.UIState,
     data: EventWithRefs?,
+    isJoinedEvent: Boolean = false,
     joinEvent: () -> Unit,
     innerPadding: PaddingValues
 ) {
@@ -197,7 +183,7 @@ private fun ScreenContent(
 
             PrimaryButton(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !ui.loading && !ui.joining,
+                enabled = !ui.loading && !ui.joining && !isJoinedEvent,
                 onClick = { joinEvent() }
             ) {
                 Box(
@@ -207,7 +193,8 @@ private fun ScreenContent(
                     if (ui.loading || ui.joining) {
                         CustomCircularProgressIndicator()
                     } else {
-                        Text("Join Event", fontSize = 24.sp)
+                        val text = if (isJoinedEvent) "Joined" else "Join Event"
+                        Text(text, fontSize = 24.sp)
                     }
                 }
             }
@@ -277,8 +264,6 @@ private fun Map(
 @Preview(showBackground = true)
 @Composable
 private fun EventDetailScreen_Preview() {
-    val context = LocalContext.current
-    val db = remember { instanceAppDbInMemory(context) }
 
     MyAppTheme {
         ScreenContent(
@@ -290,9 +275,9 @@ private fun EventDetailScreen_Preview() {
             ),
             data = EventWithRefs(
                 Event(
-                    id = 1L,
-                    departmentId = 1L,
-                    eventCategoryId = 1L,
+                    id = "",
+                    departmentId = "",
+                    eventCategoryId = "",
                     title = "Advanced Android Development",
                     description = "Hands-on workshop covering Jetpack Compose, Room, and Hilt best practices.",
                     latitude = 18.4861,
@@ -303,11 +288,11 @@ private fun EventDetailScreen_Preview() {
                     principalImage = "https://picsum.photos/seed/1/1280/720"
                 ),
                 Department(
-                    id = 1L,
+                    id = "",
                     name = "Computer Science"
                 ),
                 EventCategory(
-                    id = 1L,
+                    id = "",
                     name = "Workshop"
                 )
             )

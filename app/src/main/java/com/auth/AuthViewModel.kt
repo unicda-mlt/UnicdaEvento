@@ -153,10 +153,9 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signOut() {
-        _state.value = UiState.Loading
-        repo.signOut()
-
         viewModelScope.launch {
+            _state.value = UiState.Loading
+            repo.signOut()
             delay(500)
             _state.value = UiState.Idle
         }
