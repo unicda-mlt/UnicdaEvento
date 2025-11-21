@@ -25,11 +25,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.presentation.common.TopBarSimpleBack
 import com.domain.LocalTopBarController
 import com.flow.student.screen.discover_event.DiscoverEventScreen
@@ -37,20 +42,26 @@ import com.flow.student.screen.my_event.MyEventScreen
 import com.flow.student.screen.setting.SettingScreen
 import com.flow.student.route.StudentFlowRoute
 import com.domain.TopBarController
+import com.route.AppNestedRoute
+import com.route.main.MainAppRoute
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun MainFlowScaffold(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    vm: StudentFlowScaffoldViewModel = hiltViewModel()
 ) {
+    val user by vm.user.collectAsStateWithLifecycle()
     val controller = remember { TopBarController() }
 
-    val tabs = listOf(
-        StudentFlowRoute.DISCOVER_EVENT.route,
-        StudentFlowRoute.MY_EVENT.route,
-        StudentFlowRoute.SETTING.route
-    )
+    val tabs = remember {
+        listOf(
+            StudentFlowRoute.DISCOVER_EVENT.route,
+            StudentFlowRoute.MY_EVENT.route,
+            StudentFlowRoute.SETTING.route
+        )
+    }
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -61,6 +72,38 @@ fun MainFlowScaffold(
     val saveableHolder = rememberSaveableStateHolder()
     var currentRoute by remember { mutableStateOf(tabs[0]) }
     var activeTabNav by remember { mutableStateOf<NavHostController?>(null) }
+    var shouldResetPaginationOnInit by rememberSaveable { mutableStateOf(false) }
+
+    DisposableEffect(navHostController) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            val route = destination.route
+
+            if (shouldResetPaginationOnInit && route == StudentFlowRoute.HOME.route) {
+                scope.launch {
+                    pagerState.scrollToPage(0)
+                    shouldResetPaginationOnInit = false
+                }
+            }
+        }
+
+        navHostController.addOnDestinationChangedListener(listener)
+
+        onDispose {
+            navHostController.removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    LaunchedEffect(user) {
+        if (user == null) {
+            scope.launch {
+                shouldResetPaginationOnInit = true
+                navHostController.navigate(AppNestedRoute.Main.route) {
+                    popUpTo(MainAppRoute.Login.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
 
     CompositionLocalProvider (LocalTopBarController provides controller) {
         Scaffold (
@@ -127,7 +170,7 @@ fun MainFlowScaffold(
                             MyEventScreen(navHostController)
                         }
                         composable(StudentFlowRoute.SETTING.route) {
-                            SettingScreen(navHostController)
+                            SettingScreen()
                         }
                     }
                 }

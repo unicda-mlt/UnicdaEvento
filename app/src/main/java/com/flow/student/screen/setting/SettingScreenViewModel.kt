@@ -21,17 +21,14 @@ class SettingScreenViewModel @Inject constructor(
         data object Loading : UiState
     }
 
-    private val _uiState = MutableStateFlow<SettingScreenViewModel.UiState>(SettingScreenViewModel.UiState.Idle)
-    val uiState: StateFlow<SettingScreenViewModel.UiState> = _uiState
-
-    fun currentUserOrNull(): FirebaseUser? = repo.currentUser
+    private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
+    val uiState: StateFlow<UiState> = _uiState
 
     fun signOut() {
         viewModelScope.launch {
-            _uiState.value = SettingScreenViewModel.UiState.Loading
+            _uiState.value = UiState.Loading
             repo.signOut()
-            delay(500)
-            _uiState.value = SettingScreenViewModel.UiState.Idle
+            _uiState.value = UiState.Idle
         }
     }
 }
