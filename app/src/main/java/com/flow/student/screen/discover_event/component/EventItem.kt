@@ -1,4 +1,4 @@
-package com.component.discover_event
+package com.flow.student.screen.discover_event.component
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement

@@ -31,7 +31,7 @@ import com.component.Option
 import com.component.OptionPicker
 import com.component.OptionPickerButton
 import com.component.SearchInput
-import com.component.discover_event.EventItem
+import com.flow.student.screen.discover_event.component.EventItem
 import com.component.RangeDatePickerDialog
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
