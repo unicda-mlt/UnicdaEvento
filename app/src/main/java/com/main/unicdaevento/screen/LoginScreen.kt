@@ -42,31 +42,29 @@ import com.component.LoadingOverlay
 import com.component.PrimaryButton
 import com.component.PrimaryInputSecret
 import com.component.PrimaryInputText
-import com.auth.AuthViewModel
 import com.example.unicdaevento.R
 import com.route.AppNestedRoute
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    vm: LoginScreenViewModel = viewModel(),
-    authVM: AuthViewModel = hiltViewModel(),
+    vm: LoginScreenViewModel = hiltViewModel()
 ) {
-    val authState by authVM.state.collectAsStateWithLifecycle()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = remember(context) { context as? Activity }
-    val isLoading = authState is AuthViewModel.UiState.Loading
+    val isLoading = uiState is LoginScreenViewModel.UiState.Loading
 
-    LaunchedEffect(authState) {
-        when (authState) {
-            is AuthViewModel.UiState.Error -> {
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is LoginScreenViewModel.UiState.Error -> {
                 Toast.makeText(
                     context,
-                    (authState as AuthViewModel.UiState.Error).message,
+                    (uiState as LoginScreenViewModel.UiState.Error).message,
                     Toast.LENGTH_LONG
                 ).show()
             }
-            is AuthViewModel.UiState.EmailResetPasswordSent -> {
+            is LoginScreenViewModel.UiState.EmailResetPasswordSent -> {
                 Toast.makeText(
                     context,
                     "Se ha enviado un correo a su correo eléctronico para restablecer la contraseña",
@@ -79,7 +77,7 @@ fun LoginScreen(
 
     LoadingOverlay(isLoading)
 
-    if (authVM.currentUserOrNull() !== null) {
+    if (vm.currentUserOrNull() !== null) {
         navController.navigate(AppNestedRoute.StudentFlow.route) {
             popUpTo(AppNestedRoute.Main.route) { inclusive = true }
             launchSingleTop = true
@@ -91,14 +89,14 @@ fun LoginScreen(
             isLoading = isLoading,
             onEmailChange = vm::setEmail,
             onPasswordChange = vm::setPassword,
-            onSignInEmail = authVM::signInEmail,
-            onSignUpEmail = authVM::signUpEmail,
+            onSignInEmail = vm::signInEmail,
+            onSignUpEmail = vm::signUpEmail,
             onSignInGoogle = {
                 if (activity != null) {
-                    authVM.signInGoogle(activity)
+                    vm.signInGoogle(activity)
                 }
             },
-            onSendEmailPasswordReset = authVM::sendPasswordReset
+            onSendEmailPasswordReset = vm::sendPasswordReset
         )
     }
 }

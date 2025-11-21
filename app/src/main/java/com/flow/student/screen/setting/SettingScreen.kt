@@ -31,20 +31,19 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.component.LoadingOverlay
-import com.auth.AuthViewModel
 import com.main.unicdaevento.MyAppTheme
 import com.route.AppNestedRoute
 
 @Composable
 fun SettingScreen(
     navController: NavHostController,
-    vm: AuthViewModel = hiltViewModel(),
+    vm: SettingScreenViewModel = hiltViewModel(),
 ) {
-    val state by vm.state.collectAsStateWithLifecycle()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    LoadingOverlay(state is AuthViewModel.UiState.Loading)
+    LoadingOverlay(uiState is SettingScreenViewModel.UiState.Loading)
 
-    if (state is AuthViewModel.UiState.Idle || vm.currentUserOrNull() == null) {
+    if (uiState is SettingScreenViewModel.UiState.Idle || vm.currentUserOrNull() == null) {
         navController.navigate(AppNestedRoute.Main.route) {
             popUpTo(AppNestedRoute.Main.route) { inclusive = true }
             launchSingleTop = true

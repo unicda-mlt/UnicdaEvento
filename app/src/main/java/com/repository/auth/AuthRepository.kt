@@ -1,4 +1,4 @@
-package com.auth
+package com.repository.auth
 
 import com.google.firebase.auth.FirebaseUser
 
