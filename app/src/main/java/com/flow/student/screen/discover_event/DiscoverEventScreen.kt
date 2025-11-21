@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -118,31 +120,34 @@ fun DiscoverEventScreen(
         }
 
         Box {
+            val listState = rememberSaveable (saver = LazyListState.Saver) {
+                LazyListState()
+            }
             val events by vm.events.collectAsStateWithLifecycle(initialValue = emptyList())
 
-            LazyColumn {
+            val onEventClick: (String) -> Unit = remember(navController) {
+                { eventId ->
+                    navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(eventId)) {
+                        launchSingleTop = true
+                    }
+                }
+            }
+
+            LazyColumn (
+                state = listState
+            ) {
                 items(
                     items = events,
                     key = { it.id },
                     contentType = { "event" }
                 )
                 { event ->
-                    val navigateToDetail = remember(event.id) {
-                        {
-                            navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(StudentFlowRoute.HOME.route) { saveState = true }
-                            }
-                        }
-                    }
-
                     EventItem(
                         startDate = event.startDate,
                         endDate = event.endDate,
                         title = event.title,
                         principalImageUrl = event.principalImage,
-                        onClick = navigateToDetail
+                        onClick = { onEventClick(event.id) }
                     )
                 }
             }
