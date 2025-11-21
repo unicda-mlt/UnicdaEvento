@@ -1,9 +1,7 @@
-package com.component
+package com.presentation.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -32,11 +33,11 @@ fun GoogleMapBox(
     zoom: Float = 14f,
     showMarker: Boolean = true,
 ) {
-    val target = remember(lat, lng) { com.google.android.gms.maps.model.LatLng(lat, lng) }
+    val target = remember(lat, lng) { LatLng(lat, lng) }
     val markerState = remember(target) { MarkerState(target) }
 
     val cameraPositionState = rememberCameraPositionState {
-        position = com.google.android.gms.maps.model.CameraPosition.fromLatLngZoom(target, zoom)
+        position = CameraPosition.fromLatLngZoom(target, zoom)
     }
 
     var uiReady by remember { mutableStateOf(false) }
@@ -81,7 +82,7 @@ fun MapPreloader() {
     AndroidView(
         modifier = Modifier.size(1.dp).alpha(0f),
         factory = { ctx ->
-            com.google.android.gms.maps.MapView(ctx).apply {
+            MapView(ctx).apply {
                 onCreate(null)
                 getMapAsync { }
                 onResume()

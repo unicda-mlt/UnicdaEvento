@@ -3,7 +3,7 @@ package com.route
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.animation.NavigationAnimation
+import com.presentation.animation.HorizontalNavigationAnimation
 import com.flow.student.route.studentFlowNavGraph
 import com.route.main.mainNavGraph
 
@@ -15,10 +15,10 @@ fun AppNavHost(
     NavHost(
         navController,
         startDestination = AppNestedRoute.Main.route,
-        enterTransition = { NavigationAnimation.SlideInHorizontalEnter },
-        exitTransition = { NavigationAnimation.SlideInHorizontalExit },
-        popEnterTransition = { NavigationAnimation.SlideInHorizontalPopEnter },
-        popExitTransition = { NavigationAnimation.SlideInHorizontalPopExit }
+        enterTransition = { HorizontalNavigationAnimation.SlideInHorizontalEnter },
+        exitTransition = { HorizontalNavigationAnimation.SlideInHorizontalExit },
+        popEnterTransition = { HorizontalNavigationAnimation.SlideInHorizontalPopEnter },
+        popExitTransition = { HorizontalNavigationAnimation.SlideInHorizontalPopExit }
     ) {
         mainNavGraph(navController)
         studentFlowNavGraph(navController)

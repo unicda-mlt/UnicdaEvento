@@ -43,11 +43,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.component.CustomAsyncImage
-import com.component.CustomCircularProgressIndicator
-import com.component.GoogleMapBox
-import com.component.PrimaryButton
-import com.component.TopBarSimpleBack
+import com.presentation.common.CustomAsyncImage
+import com.presentation.common.CustomCircularProgressIndicator
+import com.presentation.common.GoogleMapBox
+import com.presentation.common.PrimaryButton
+import com.presentation.common.TopBarSimpleBack
 import com.domain.entities.Department
 import com.domain.entities.Event
 import com.domain.entities.EventCategory

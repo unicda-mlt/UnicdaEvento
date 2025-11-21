@@ -1,4 +1,4 @@
-package com.component
+package com.presentation.common
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat

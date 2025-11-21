@@ -1,11 +1,11 @@
-package com.animation
+package com.presentation.animation
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 
 
-sealed class NavigationAnimation {
+sealed class HorizontalNavigationAnimation {
     companion object {
         // PUSH: new screen slides in from right → left
         val SlideInHorizontalEnter = slideInHorizontally(tween(400)) { fullWidth ->  fullWidth }

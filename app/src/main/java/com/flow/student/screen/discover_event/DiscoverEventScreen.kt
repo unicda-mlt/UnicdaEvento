@@ -27,12 +27,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.component.Option
-import com.component.OptionPicker
-import com.component.OptionPickerButton
-import com.component.SearchInput
+import com.presentation.common.Option
+import com.presentation.common.OptionPicker
+import com.presentation.common.OptionPickerButton
+import com.presentation.common.SearchInput
 import com.flow.student.screen.discover_event.component.EventItem
-import com.component.RangeDatePickerDialog
+import com.presentation.common.RangeDatePickerDialog
 import com.flow.student.route.StudentFlowRoute
 import com.main.unicdaevento.MyAppTheme
 

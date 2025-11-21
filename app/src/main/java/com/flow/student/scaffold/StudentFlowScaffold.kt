@@ -30,7 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
-import com.component.TopBarSimpleBack
+import com.presentation.common.TopBarSimpleBack
 import com.domain.LocalTopBarController
 import com.flow.student.screen.discover_event.DiscoverEventScreen
 import com.flow.student.screen.my_event.MyEventScreen

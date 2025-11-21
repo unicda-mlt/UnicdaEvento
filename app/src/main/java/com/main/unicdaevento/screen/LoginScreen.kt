@@ -38,10 +38,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.component.LoadingOverlay
-import com.component.PrimaryButton
-import com.component.PrimaryInputSecret
-import com.component.PrimaryInputText
+import com.presentation.common.LoadingOverlay
+import com.presentation.common.PrimaryButton
+import com.presentation.common.PrimaryInputSecret
+import com.presentation.common.PrimaryInputText
 import com.example.unicdaevento.R
 import com.route.AppNestedRoute
 

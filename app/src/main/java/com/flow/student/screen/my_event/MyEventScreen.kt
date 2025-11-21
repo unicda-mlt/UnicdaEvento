@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.component.CenterPopupMenuDialog
-import com.component.MenuOption
+import com.presentation.common.CenterPopupMenuDialog
+import com.presentation.common.MenuOption
 import com.flow.student.screen.discover_event.component.EventItem
 import com.flow.student.route.StudentFlowRoute
 

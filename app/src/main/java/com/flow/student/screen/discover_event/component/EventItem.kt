@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.component.CustomAsyncImage
+import com.presentation.common.CustomAsyncImage
 import com.main.unicdaevento.MyAppTheme
 import com.util.formatEpochLongToDayName
 import com.util.formatEpochLongToMeridiemTime
