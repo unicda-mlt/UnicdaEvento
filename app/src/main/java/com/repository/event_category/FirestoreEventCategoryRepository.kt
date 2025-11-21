@@ -1,6 +1,6 @@
 package com.repository.event_category
 
-import com.domain.Entity
+import com.domain.entities.Entity
 import com.domain.entities.EventCategory
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query

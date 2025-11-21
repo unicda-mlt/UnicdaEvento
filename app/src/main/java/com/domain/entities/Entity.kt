@@ -1,4 +1,4 @@
-package com.domain
+package com.domain.entities
 
 enum class Entity(val collection: String) {
     DEPARTMENT("departments"),

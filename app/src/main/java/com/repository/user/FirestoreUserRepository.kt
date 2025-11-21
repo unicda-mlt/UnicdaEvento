@@ -1,6 +1,6 @@
 package com.repository.user
 
-import com.domain.Entity
+import com.domain.entities.Entity
 import com.domain.entities.EventFirestore
 import com.domain.entities.UserEvent
 import com.domain.entities.UserEventFirestore

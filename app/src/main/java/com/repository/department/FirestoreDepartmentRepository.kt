@@ -1,6 +1,6 @@
 package com.repository.department
 
-import com.domain.Entity
+import com.domain.entities.Entity
 import com.domain.entities.Department
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query

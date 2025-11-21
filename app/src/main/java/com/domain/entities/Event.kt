@@ -1,7 +1,6 @@
 package com.domain.entities
 
 import androidx.annotation.Keep
-import com.domain.Entity
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore

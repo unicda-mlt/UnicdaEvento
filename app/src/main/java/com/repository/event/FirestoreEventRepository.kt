@@ -1,7 +1,7 @@
 package com.repository.event
 
 import com.di.CoroutineDispatchersModule
-import com.domain.Entity
+import com.domain.entities.Entity
 import com.domain.entities.Department
 import java.util.Date
 import com.domain.entities.Event
