@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,7 +29,21 @@ fun MyEventScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn {
+        val listState = rememberSaveable (saver = LazyListState.Saver) {
+            LazyListState()
+        }
+
+        val onEventClick: (String) -> Unit = remember(navController) {
+            { eventId ->
+                navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(eventId)) {
+                    launchSingleTop = true
+                }
+            }
+        }
+
+        LazyColumn (
+            state = listState
+        ) {
             items(
                 items = events,
                 key = { it.event.id },
@@ -36,22 +52,12 @@ fun MyEventScreen(
             { userEvent ->
                 val event = userEvent.event
 
-                val navigateToDetail = remember(event.id) {
-                    {
-                        navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(event.id)) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(StudentFlowRoute.HOME.route) { saveState = true }
-                        }
-                    }
-                }
-
                 EventItem(
                     startDate = event.startDate,
                     endDate = event.endDate,
                     title = event.title,
                     principalImageUrl = event.principalImage,
-                    onClick = navigateToDetail,
+                    onClick = { onEventClick(event.id) },
                     onLongClick = {
                         vm.setSelectedEventId(userEvent.id)
                     }
