@@ -1,4 +1,4 @@
-package com.flow.student.screen.setting
+package com.flow.cms.screen.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

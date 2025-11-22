@@ -38,6 +38,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.domain.entities.UserRole
 import com.presentation.common.LoadingOverlay
 import com.presentation.common.PrimaryButton
 import com.presentation.common.PrimaryInputSecret
@@ -51,9 +52,28 @@ fun LoginScreen(
     vm: LoginScreenViewModel = hiltViewModel()
 ) {
     val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val currentUserRole by vm.currentUserRole.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = remember(context) { context as? Activity }
     val isLoading = uiState is LoginScreenViewModel.UiState.Loading
+
+    LaunchedEffect(currentUserRole) {
+        when (currentUserRole) {
+            UserRole.ADMIN -> {
+                navController.navigate(AppNestedRoute.CMSFlow.route) {
+                    popUpTo(AppNestedRoute.Main.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            UserRole.NO_ROLE -> {
+                navController.navigate(AppNestedRoute.StudentFlow.route) {
+                    popUpTo(AppNestedRoute.Main.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            else -> { }
+        }
+    }
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -77,13 +97,7 @@ fun LoginScreen(
 
     LoadingOverlay(isLoading)
 
-    if (vm.currentUserOrNull() !== null) {
-        navController.navigate(AppNestedRoute.StudentFlow.route) {
-            popUpTo(AppNestedRoute.Main.route) { inclusive = true }
-            launchSingleTop = true
-        }
-    }
-    else {
+    if (currentUserRole == null) {
         ScreenContent(
             vm = vm,
             isLoading = isLoading,

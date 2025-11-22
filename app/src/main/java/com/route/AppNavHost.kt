@@ -3,6 +3,7 @@ package com.route
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.flow.cms.route.cmsFlowNavGraph
 import com.flow.student.route.studentFlowNavGraph
 import com.route.main.mainNavGraph
 
@@ -17,5 +18,6 @@ fun AppNavHost(
     ) {
         mainNavGraph(navController)
         studentFlowNavGraph(navController)
+        cmsFlowNavGraph(navController)
     }
 }

@@ -7,11 +7,13 @@ import com.repository.auth.FirebaseAuthRepository
 import com.example.unicdaevento.R
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.auth.FirebaseAuth
+import com.repository.user.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -21,10 +23,10 @@ object AuthModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        auth: FirebaseAuth
-    ): AuthRepository = FirebaseAuthRepository(
-        auth = auth,
-    )
+        auth: FirebaseAuth,
+        userRepository: UserRepository,
+        @ApplicationScope externalScope: CoroutineScope
+    ): AuthRepository = FirebaseAuthRepository(auth, userRepository, externalScope)
 
     @Provides
     @Singleton

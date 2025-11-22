@@ -10,6 +10,8 @@ import com.repository.event_category.EventCategoryRepository
 import com.repository.event_category.FirestoreEventCategoryRepository
 import com.repository.user.FirestoreUserRepository
 import com.repository.user.UserRepository
+import com.repository.user_role.FirestoreUserRoleRepository
+import com.repository.user_role.UserRoleRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,5 +63,13 @@ object FirestoreModule {
     ): EventRepository = FirestoreEventRepository(
         db = firestore,
         dispatcher = dispatcher
+    )
+
+    @Provides
+    @Singleton
+    fun provideUserRoleRepository(
+        firestore: FirebaseFirestore,
+    ): UserRoleRepository = FirestoreUserRoleRepository(
+        db = firestore
     )
 }

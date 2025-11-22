@@ -5,6 +5,8 @@ import com.domain.entities.EventFirestore
 import com.domain.entities.UserEvent
 import com.domain.entities.UserEventFirestore
 import com.domain.entities.UserEventWithRefs
+import com.domain.entities.UserRole
+import com.domain.entities.UserRoleEntity
 import com.domain.entities.toDomain
 import com.domain.entities.toFirestore
 import com.google.firebase.auth.FirebaseAuth
@@ -35,6 +37,7 @@ class FirestoreUserRepository(
 
     private val userEvents = db.collection(Entity.USER_EVENT.collection)
     private val events = db.collection(Entity.EVENT.collection)
+    private val userWithRoles = db.collection(Entity.USER_WITH_ROLE.collection)
 
     private fun currentUserId(): String =
         auth.currentUser?.uid ?: error("Not signed in")
@@ -155,4 +158,32 @@ class FirestoreUserRepository(
                 }
             }
         }
+
+    override suspend fun getRole(userId: String): UserRole {
+        val userWithRoleDoc = userWithRoles
+            .document(userId)
+            .get()
+            .await()
+
+        if (!userWithRoleDoc.exists()) {
+            return UserRole.NO_ROLE
+        }
+
+        val roleRef = userWithRoleDoc.getDocumentReference("roleRef")
+
+        if (roleRef == null) {
+            return UserRole.NO_ROLE
+        }
+
+        val userRoleDoc = roleRef.get().await()
+
+        if (!userRoleDoc.exists()) {
+            UserRole.NO_ROLE
+        }
+
+        val userRoleEntity = userRoleDoc.toObject<UserRoleEntity>()?.copy(id = userRoleDoc.id)
+        val userRole = UserRole.fromValue(userRoleEntity?.name)
+
+        return userRole
+    }
 }

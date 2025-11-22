@@ -1,4 +1,4 @@
-package com.flow.student.scaffold
+package com.flow.cms.scaffold
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class StudentFlowScaffoldViewModel @Inject constructor(
+class CMSFlowScaffoldViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
     val currentUser: StateFlow<FirebaseUser?> = authRepository.currentUser

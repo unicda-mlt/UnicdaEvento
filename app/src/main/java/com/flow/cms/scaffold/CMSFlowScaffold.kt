@@ -1,11 +1,12 @@
-package com.flow.student.scaffold
+package com.flow.cms.scaffold
 
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -15,51 +16,46 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
-import androidx.compose.runtime.setValue
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import com.presentation.common.TopBarSimpleBack
 import com.domain.LocalTopBarController
-import com.flow.student.screen.discover_event.DiscoverEventScreen
-import com.flow.student.screen.my_event.MyEventScreen
-import com.flow.student.screen.setting.SettingScreen
-import com.flow.student.route.StudentFlowRoute
 import com.domain.TopBarController
+import com.flow.cms.route.CMSFlowRoute
+import com.flow.cms.screen.home.HomeScreen
+import com.flow.cms.screen.setting.SettingScreen
+import com.presentation.common.TopBarSimpleBack
 import com.route.AppNestedRoute
 import com.route.main.MainAppRoute
 import kotlinx.coroutines.launch
 
-
 @Composable
-fun StudentFlowScaffold(
+fun CMSFlowScaffold(
     navHostController: NavHostController,
-    vm: StudentFlowScaffoldViewModel = hiltViewModel()
+    vm: CMSFlowScaffoldViewModel = hiltViewModel()
 ) {
     val currentUser by vm.currentUser.collectAsStateWithLifecycle()
     val controller = remember { TopBarController() }
 
     val tabs = remember {
         listOf(
-            StudentFlowRoute.DISCOVER_EVENT.route,
-            StudentFlowRoute.MY_EVENT.route,
-            StudentFlowRoute.SETTING.route
+            CMSFlowRoute.HOME.route,
+            CMSFlowRoute.SETTING.route
         )
     }
 
@@ -78,7 +74,7 @@ fun StudentFlowScaffold(
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             val route = destination.route
 
-            if (shouldResetPaginationOnInit && route == StudentFlowRoute.HOME.route) {
+            if (shouldResetPaginationOnInit && route == CMSFlowRoute.HOME.route) {
                 scope.launch {
                     pagerState.scrollToPage(0)
                     shouldResetPaginationOnInit = false
@@ -163,13 +159,10 @@ fun StudentFlowScaffold(
                         startDestination = tabs[page],
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        composable(StudentFlowRoute.DISCOVER_EVENT.route) {
-                            DiscoverEventScreen(navHostController)
+                        composable(CMSFlowRoute.HOME.route) {
+                            HomeScreen(navHostController)
                         }
-                        composable(StudentFlowRoute.MY_EVENT.route) {
-                            MyEventScreen(navHostController)
-                        }
-                        composable(StudentFlowRoute.SETTING.route) {
+                        composable(CMSFlowRoute.SETTING.route) {
                             SettingScreen()
                         }
                     }
@@ -180,15 +173,14 @@ fun StudentFlowScaffold(
 }
 
 private fun titleFromRoute(route: String): String {
-    return StudentFlowRoute.fromRoute(route)?.title ?: route
+    return CMSFlowRoute.fromRoute(route)?.title ?: route
 }
 
 @Composable
 private fun TabIcon(route: String) {
-    val icon = when(StudentFlowRoute.fromRoute(route)) {
-        StudentFlowRoute.DISCOVER_EVENT -> Icons.Filled.Home
-        StudentFlowRoute.MY_EVENT -> Icons.Filled.CalendarMonth
-        StudentFlowRoute.SETTING -> Icons.Filled.Settings
+    val icon = when(CMSFlowRoute.fromRoute(route)) {
+        CMSFlowRoute.HOME -> Icons.Filled.Home
+        CMSFlowRoute.SETTING -> Icons.Filled.Settings
         else -> Icons.Filled.Android
     }
 

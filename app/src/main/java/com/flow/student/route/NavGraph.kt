@@ -8,7 +8,7 @@ import com.route.AppNestedRoute
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.flow.student.screen.event_detail.EventDetailScreen
-import com.flow.student.scaffold.MainFlowScaffold
+import com.flow.student.scaffold.StudentFlowScaffold
 
 
 fun NavGraphBuilder.studentFlowNavGraph(
@@ -19,7 +19,7 @@ fun NavGraphBuilder.studentFlowNavGraph(
         startDestination = StudentFlowRoute.HOME.route
     ) {
         composable(StudentFlowRoute.HOME.route) {
-            MainFlowScaffold(navController)
+            StudentFlowScaffold(navController)
         }
         composable(
             route = StudentFlowRoute.EVENT_DETAIL.route,
