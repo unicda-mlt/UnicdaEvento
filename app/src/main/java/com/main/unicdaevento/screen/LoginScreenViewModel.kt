@@ -56,6 +56,8 @@ class LoginScreenViewModel @Inject constructor(
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
 
+    val currentUser: StateFlow<FirebaseUser?> = authRepository.currentUser
+
     val currentUserRole: StateFlow<UserRole?> = authRepository.currentUserRole
 
     private fun String.isValidEmail(): Boolean =

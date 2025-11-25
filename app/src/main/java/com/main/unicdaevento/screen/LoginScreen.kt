@@ -52,10 +52,11 @@ fun LoginScreen(
     vm: LoginScreenViewModel = hiltViewModel()
 ) {
     val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val currentUser by vm.currentUser.collectAsStateWithLifecycle()
     val currentUserRole by vm.currentUserRole.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = remember(context) { context as? Activity }
-    val isLoading = uiState is LoginScreenViewModel.UiState.Loading
+    val isLoading = uiState is LoginScreenViewModel.UiState.Loading || (currentUser != null && currentUserRole == null)
 
     LaunchedEffect(currentUserRole) {
         when (currentUserRole) {
@@ -97,7 +98,7 @@ fun LoginScreen(
 
     LoadingOverlay(isLoading)
 
-    if (currentUserRole == null) {
+    if (currentUser == null) {
         ScreenContent(
             vm = vm,
             isLoading = isLoading,
