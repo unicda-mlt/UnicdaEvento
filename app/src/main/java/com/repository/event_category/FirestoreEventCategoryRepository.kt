@@ -1,5 +1,6 @@
 package com.repository.event_category
 
+import com.domain.RepoResult
 import com.domain.entities.Entity
 import com.domain.entities.EventCategory
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,8 +12,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.toObject
+import com.util.normalizeText
 import kotlinx.coroutines.CoroutineDispatcher
-import okhttp3.internal.toImmutableList
 
 
 class FirestoreEventCategoryRepository(
@@ -22,56 +23,108 @@ class FirestoreEventCategoryRepository(
 
     private val collection = db.collection(Entity.EVENT_CATEGORY.collection)
 
-    override fun observeAll(): Flow<List<EventCategory>> = callbackFlow {
-        val listener = collection
-            .orderBy("name", Query.Direction.ASCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    close(error)
-                    return@addSnapshotListener
-                }
+    override fun observeAll(name: String?): Flow<List<EventCategory>> = callbackFlow {
+        val query = if (name.isNullOrBlank()) {
+            collection.orderBy("nameNormalized", Query.Direction.ASCENDING)
+        } else {
+            val nameNormalized = normalizeText(name)
 
-                val items = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject<EventCategory>()?.copy(id = doc.id)
-                }.orEmpty()
+            collection
+                .orderBy("nameNormalized", Query.Direction.ASCENDING)
+                .startAt(nameNormalized)
+                .endAt(nameNormalized + "\uf8ff")
+        }
 
-                trySend(items).isSuccess
+        val listener = query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
             }
+
+            val items = snapshot?.documents?.mapNotNull { doc ->
+                doc.toObject<EventCategory>()?.copy(id = doc.id)
+            }.orEmpty()
+
+            trySend(items).isSuccess
+        }
 
         awaitClose { listener.remove() }
     }.flowOn(dispatcher)
 
-    override suspend fun insert(vararg eventCategory: EventCategory): List<String> {
-        val ids = mutableListOf<String>()
+    override suspend fun insert(vararg categories: EventCategory): RepoResult<Unit> {
+        return try {
+            for (category in categories) {
+                val nameNormalized = normalizeText(category.name)
 
-        for (dep in eventCategory) {
-            val docRef = if (dep.id.isBlank()) collection.document() else collection.document(dep.id)
-            val snapshot = docRef.get().await()
+                val existingQuery = collection
+                    .whereEqualTo("nameNormalized", nameNormalized)
+                    .limit(1)
+                    .get()
+                    .await()
 
-            if (snapshot.exists()) {
-                throw IllegalStateException("Event category with id '${docRef.id}' already exists")
+                if (!existingQuery.isEmpty) {
+                    throw IllegalStateException(
+                        "Category with name '${category.name}' already exists"
+                    )
+                }
+
+                val docRef = if (category.id.isBlank()) collection.document() else collection.document(category.id)
+                val snapshot = docRef.get().await()
+
+                if (snapshot.exists()) {
+                    throw IllegalStateException("Category with id '${docRef.id}' already exists")
+                }
+
+                val newDep = category.copy(id = docRef.id)
+                docRef.set(newDep).await()
             }
 
-            val newDep = dep.copy(id = docRef.id)
-            docRef.set(newDep).await()
-
-            ids.plus(docRef.id)
-        }
-
-        return ids.toImmutableList()
-    }
-
-    override suspend fun update(vararg eventCategory: EventCategory) {
-        for (dep in eventCategory) {
-            require(dep.id.isNotBlank()) { "Event category id required for update()" }
-            collection.document(dep.id).set(dep).await()
+            RepoResult.Success(Unit)
+        } catch (e: IllegalStateException) {
+            RepoResult.Error(e.message ?: "")
+        } catch (e: Exception) {
+            RepoResult.Error("Unexpected error: ${e.message}")
         }
     }
 
-    override suspend fun delete(vararg eventCategory: EventCategory) {
-        for (dep in eventCategory) {
-            require(dep.id.isNotBlank()) { "Event category id required for delete()" }
-            collection.document(dep.id).delete().await()
+    override suspend fun update(vararg categories: EventCategory): RepoResult<Unit> {
+        return try {
+            for (category in categories) {
+                require(category.id.isNotBlank()) { "Category id required for update()" }
+
+                val nameNormalized = normalizeText(category.name)
+
+                val existingQuery = collection
+                    .whereEqualTo("nameNormalized", nameNormalized)
+                    .limit(1)
+                    .get()
+                    .await()
+
+                val existingConflict = existingQuery.documents.firstOrNull()?.let { doc ->
+                    doc.id != category.id
+                } ?: false
+
+                if (existingConflict) {
+                    throw IllegalStateException(
+                        "Category with name '${category.name}' already exists"
+                    )
+                }
+
+                collection.document(category.id).set(category).await()
+            }
+
+            RepoResult.Success(Unit)
+        } catch (e: IllegalStateException) {
+            RepoResult.Error(e.message ?: "")
+        } catch (e: Exception) {
+            RepoResult.Error("Unexpected error: ${e.message}")
+        }
+    }
+
+    override suspend fun delete(vararg categories: EventCategory) {
+        for (category in categories) {
+            require(category.id.isNotBlank()) { "Event category id required for delete()" }
+            collection.document(category.id).delete().await()
         }
     }
 }

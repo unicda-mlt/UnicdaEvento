@@ -7,6 +7,7 @@ import com.route.AppNestedRoute
 import androidx.navigation.compose.composable
 import com.flow.cms.scaffold.CMSDefaultFlowScaffold
 import com.flow.cms.scaffold.CMSFlowScaffold
+import com.flow.cms.screen.event_category.EventCategoryListScreen
 import com.flow.cms.screen.event_department.EventDepartmentListScreen
 
 
@@ -26,6 +27,14 @@ fun NavGraphBuilder.cmsFlowNavGraph(
                 CMSFlowRoute.DEPARTMENT_LIST.route
             ) {
                 EventDepartmentListScreen(navController)
+            }
+        }
+        composable(CMSFlowRoute.CATEGORY_LIST.route) {
+            CMSDefaultFlowScaffold(
+                navController,
+                CMSFlowRoute.CATEGORY_LIST.route
+            ) {
+                EventCategoryListScreen(navController)
             }
         }
     }

@@ -44,7 +44,9 @@ fun HomeScreen (
 
         HomeButton(
             title = "Categories",
-            onClick = { }
+            onClick = {
+                navController.navigate(CMSFlowRoute.CATEGORY_LIST.route)
+            }
         )
 
         HomeButton(
