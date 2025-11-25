@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DividerDefaults
@@ -53,6 +55,7 @@ fun <T> OptionPicker(
     itemContent: (@Composable (Option<T>, Boolean) -> Unit)? = null // optional custom row
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val scrollVerticalState = rememberScrollState(0)
 
     Box {
         OptionPickerButton(
@@ -66,8 +69,10 @@ fun <T> OptionPicker(
         )
 
         DropdownMenu(
+            modifier = Modifier.heightIn(max = 400.dp),
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            scrollState = scrollVerticalState,
         ) {
             options.forEach { option ->
                 val isSelected = option.value == selected
