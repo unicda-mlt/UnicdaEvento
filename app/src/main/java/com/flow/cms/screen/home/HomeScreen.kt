@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.flow.cms.route.CMSFlowRoute
 import com.main.unicdaevento.MyAppTheme
 
 
@@ -35,17 +36,19 @@ fun HomeScreen (
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HomeButton(
-            title = "Departamentos",
+            title = "Departments",
+            onClick = {
+                navController.navigate(CMSFlowRoute.DEPARTMENT_LIST.route)
+            }
+        )
+
+        HomeButton(
+            title = "Categories",
             onClick = { }
         )
 
         HomeButton(
-            title = "Categorías",
-            onClick = { }
-        )
-
-        HomeButton(
-            title = "Eventos",
+            title = "Events",
             onClick = { }
         )
     }

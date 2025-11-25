@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.IgnoreExtraProperties
-import com.util.normalizeTextKeepEnye
+import com.util.normalizeText
 import java.util.Date
 
 
@@ -69,7 +69,7 @@ fun Event.toFirestore(db: FirebaseFirestore): EventFirestore = EventFirestore(
         db.collection(Entity.EVENT_CATEGORY.collection).document(it)
     },
     title = title,
-    titleNormalized = normalizeTextKeepEnye(title),
+    titleNormalized = normalizeText(title),
     description = description,
     location = location,
     locationCoordinates = GeoPoint(latitude, longitude),

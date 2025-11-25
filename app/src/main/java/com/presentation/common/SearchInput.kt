@@ -4,6 +4,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,7 +42,8 @@ fun SearchInput(
         onValueChange,
         singleLine = true,
         maxLines = 1,
-        modifier = modifier,
+        modifier = modifier
+            .heightIn(min = 60.dp),
         enabled = enabled,
         placeholder = placeholder,
         isError = isError,

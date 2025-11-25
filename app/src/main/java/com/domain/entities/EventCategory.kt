@@ -9,4 +9,5 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 data class EventCategory(
     val id: String = "",
     val name: String = "",
+    val nameNormalized: String = "",
 )

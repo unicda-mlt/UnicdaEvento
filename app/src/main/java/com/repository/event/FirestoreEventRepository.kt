@@ -14,7 +14,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.util.FirestoreUtils
-import com.util.normalizeTextKeepEnye
+import com.util.normalizeText
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,7 +73,7 @@ class FirestoreEventRepository @Inject constructor(
                 .orderBy("titleNormalized", Query.Direction.ASCENDING)
                 .orderBy("startDate", Query.Direction.ASCENDING)
 
-            val titlePrefixNormalized = normalizeTextKeepEnye(titlePrefix)
+            val titlePrefixNormalized = normalizeText(titlePrefix)
             val startBound = Timestamp(Date(fromDate ?: 0L))
             val endBound =
                 toDate?.let { Timestamp(Date(it)) } ?: FirestoreUtils.MAX_FIRESTORE_TIMESTAMP

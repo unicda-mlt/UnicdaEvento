@@ -4,7 +4,7 @@ import java.text.Normalizer
 import java.util.Locale
 
 
-fun normalizeTextKeepEnye(input: String): String {
+fun normalizeText(input: String): String {
     var text = input.replace("ñ", "__enye__").replace("Ñ", "__ENYE__")
 
     // Normalize (decomposes accented characters)
