@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 
@@ -51,10 +53,21 @@ class DiscoverEventScreenViewModel @Inject constructor(
     private val _eventCategories = MutableStateFlow<List<EventCategory>>(emptyList())
     val eventCategories: StateFlow<List<EventCategory>> = _eventCategories.asStateFlow()
 
+    init {
+        setRangeDate(null, null)
+    }
+
     fun updateSearch(s: String) = _params.update { it.copy(search = s) }
-    fun setRangeDate(fromDate: Long?, toDate: Long?) = _params.update { it.copy(fromDate = fromDate, toDate = toDate) }
+    fun setRangeDate(fromDate: Long?, toDate: Long?) = _params.update { it.copy(fromDate = fromDate ?: todayStartInMillis(), toDate = toDate) }
     fun setDepartmentId(id: String?) = _params.update { it.copy(departmentId = id) }
     fun setCategoryId(id: String?) = _params.update { it.copy(categoryEventId = id) }
+
+    private fun todayStartInMillis(): Long {
+        val now = LocalDate.now()
+        return now.atStartOfDay(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     private val paramsFlow: Flow<Params> =

@@ -9,6 +9,7 @@ import com.domain.entities.UserRole
 import com.domain.entities.UserRoleEntity
 import com.domain.entities.toDomain
 import com.domain.entities.toFirestore
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.AggregateSource
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okhttp3.internal.wait
+import java.util.Date
 
 
 class FirestoreUserRepository(
@@ -52,7 +54,7 @@ class FirestoreUserRepository(
 
     /** Observe all Event docs linked by the signed-in user's user_events documents. */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun myEventsObserveAll(): Flow<List<UserEventWithRefs>> =
+    override fun myEventsObserveAll(fromDate: Long?): Flow<List<UserEventWithRefs>> =
         authStateFlow.flatMapLatest { user ->
             if (user == null) {
                 flowOf(emptyList())
@@ -78,14 +80,24 @@ class FirestoreUserRepository(
                                 val ref = ueFs.eventRef ?: return@mapNotNull null
 
                                 val evSnap = ref.get().await()
-                                val event = evSnap.toObject<EventFirestore>()?.copy(id = evSnap.id)
-                                if (event != null) UserEventWithRefs(
+                                val eventFs = evSnap.toObject<EventFirestore>()?.copy(id = evSnap.id)
+                                    ?: return@mapNotNull null
+
+                                val event = eventFs.toDomain()
+
+                                UserEventWithRefs(
                                     id = doc.id,
                                     userId = ueFs.userId,
-                                    event = event.toDomain()
+                                    event = event
                                 )
-                                else null
+                            }.let { list ->
+                                if (fromDate != null) {
+                                    list.filter { it.event.startDate >= fromDate }
+                                } else {
+                                    list
+                                }
                             }
+
                             trySend(items).isSuccess
                         }
                     }

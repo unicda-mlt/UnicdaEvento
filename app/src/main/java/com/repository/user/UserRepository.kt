@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface UserRepository {
-    fun myEventsObserveAll(): Flow<List<UserEventWithRefs>>
+    fun myEventsObserveAll(
+        fromDate: Long? = null
+    ): Flow<List<UserEventWithRefs>>
 
     suspend fun joinEvent(vararg eventId: String)
 
