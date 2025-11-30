@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presentation.common.CustomAsyncImage
-import com.main.unicdaevento.MyAppTheme
+import com.presentation.theme.MyAppTheme
 import com.util.formatEpochLongToDayName
 import com.util.formatEpochLongToMeridiemTime
 import com.util.formatEpochLongToMonthDay

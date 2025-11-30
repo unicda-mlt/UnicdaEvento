@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.main.unicdaevento.MyAppTheme
+import com.presentation.theme.MyAppTheme
 
 @Composable
 fun LoadingIcon(

@@ -54,7 +54,7 @@ import com.domain.entities.EventCategory
 import com.domain.entities.EventWithRefs
 import com.example.unicdaevento.R
 import com.flow.student.route.StudentFlowRoute
-import com.main.unicdaevento.MyAppTheme
+import com.presentation.theme.MyAppTheme
 import com.util.formatEpochLongToFullMonthDayTimeYear
 
 

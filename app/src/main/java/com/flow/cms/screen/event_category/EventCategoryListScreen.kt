@@ -50,7 +50,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.domain.entities.EventCategory
-import com.main.unicdaevento.MyAppTheme
+import com.presentation.theme.MyAppTheme
 import com.presentation.common.PopupDialogTextFieldForm
 import com.presentation.common.SearchInput
 import kotlinx.coroutines.flow.MutableStateFlow

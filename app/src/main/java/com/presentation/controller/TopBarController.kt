@@ -1,4 +1,4 @@
-package com.domain
+package com.presentation.controller
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

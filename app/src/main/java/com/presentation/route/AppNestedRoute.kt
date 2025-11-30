@@ -1,5 +1,4 @@
-package com.route
-
+package com.presentation.route
 
 sealed class AppNestedRoute(val route: String) {
     data object Main : AppNestedRoute("main")

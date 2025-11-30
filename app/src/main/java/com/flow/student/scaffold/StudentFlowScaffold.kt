@@ -36,14 +36,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.presentation.common.TopBarSimpleBack
-import com.domain.LocalTopBarController
+import com.presentation.controller.LocalTopBarController
 import com.flow.student.screen.discover_event.DiscoverEventScreen
 import com.flow.student.screen.my_event.MyEventScreen
 import com.flow.student.screen.setting.SettingScreen
 import com.flow.student.route.StudentFlowRoute
-import com.domain.TopBarController
-import com.route.AppNestedRoute
-import com.route.main.MainAppRoute
+import com.presentation.controller.TopBarController
+import com.presentation.route.AppNestedRoute
+import com.flow.main.route.MainAppRoute
 import kotlinx.coroutines.launch
 
 

@@ -1,6 +1,6 @@
-package com.route.main
+package com.flow.main.route
 
-import com.route.AppRouteInfo
+import com.presentation.route.AppRouteInfo
 
 
 sealed class MainAppRoute(override val route: String, override val title: String) : AppRouteInfo {

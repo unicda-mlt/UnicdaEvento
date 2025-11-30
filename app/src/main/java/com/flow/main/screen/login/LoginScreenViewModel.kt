@@ -1,4 +1,4 @@
-package com.main.unicdaevento.screen
+package com.flow.main.screen.login
 
 import android.app.Activity
 import android.util.Patterns

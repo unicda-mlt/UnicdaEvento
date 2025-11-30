@@ -36,7 +36,7 @@ import com.presentation.common.SearchInput
 import com.flow.student.screen.discover_event.component.EventItem
 import com.presentation.common.RangeDatePickerDialog
 import com.flow.student.route.StudentFlowRoute
-import com.main.unicdaevento.MyAppTheme
+import com.presentation.theme.MyAppTheme
 
 @Composable
 fun DiscoverEventScreen(

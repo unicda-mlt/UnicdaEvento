@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navigation
-import com.route.AppNestedRoute
+import com.presentation.route.AppNestedRoute
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.flow.student.screen.event_detail.EventDetailScreen

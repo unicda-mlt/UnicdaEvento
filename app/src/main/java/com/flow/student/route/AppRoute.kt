@@ -1,6 +1,6 @@
 package com.flow.student.route
 
-import com.route.AppRouteInfo
+import com.presentation.route.AppRouteInfo
 
 sealed class StudentFlowRoute(override val route: String, override val title: String) : AppRouteInfo {
     data object HOME : StudentFlowRoute("student_flow_home", "Home")

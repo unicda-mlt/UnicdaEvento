@@ -1,11 +1,11 @@
-package com.route.main
+package com.flow.main.route
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.main.unicdaevento.screen.LoginScreen
-import com.route.AppNestedRoute
+import com.flow.main.screen.login.LoginScreen
+import com.presentation.route.AppNestedRoute
 
 
 fun NavGraphBuilder.mainNavGraph(

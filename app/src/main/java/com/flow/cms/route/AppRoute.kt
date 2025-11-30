@@ -1,6 +1,6 @@
 package com.flow.cms.route
 
-import com.route.AppRouteInfo
+import com.presentation.route.AppRouteInfo
 
 sealed class CMSFlowRoute(override val route: String, override val title: String) : AppRouteInfo {
     data object HOME : CMSFlowRoute("cms_flow_home", "Home")

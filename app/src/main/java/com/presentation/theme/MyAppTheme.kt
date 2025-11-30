@@ -1,7 +1,6 @@
-package com.main.unicdaevento
+package com.presentation.theme
 
 import androidx.compose.runtime.Composable
-import com.ui.theme.AppTheme
 
 @Composable
 fun MyAppTheme (content: @Composable (() -> Unit)) {

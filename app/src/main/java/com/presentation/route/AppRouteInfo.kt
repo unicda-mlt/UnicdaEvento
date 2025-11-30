@@ -1,5 +1,4 @@
-package com.route
-
+package com.presentation.route
 
 interface AppRouteInfo {
     val route: String

@@ -1,4 +1,4 @@
-package com.main.unicdaevento.screen
+package com.flow.main.screen.login
 
 import android.app.Activity
 import android.widget.Toast
@@ -44,7 +44,8 @@ import com.presentation.common.PrimaryButton
 import com.presentation.common.PrimaryInputSecret
 import com.presentation.common.PrimaryInputText
 import com.example.unicdaevento.R
-import com.route.AppNestedRoute
+import com.presentation.route.AppNestedRoute
+import com.presentation.theme.MyAppTheme
 
 @Composable
 fun LoginScreen(
@@ -299,7 +300,7 @@ private fun ScreenButton(
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreen_Preview() {
-    _root_ide_package_.com.main.unicdaevento.MyAppTheme {
+    MyAppTheme {
         ScreenContent(
             vm = viewModel(),
             isLoading = false,
