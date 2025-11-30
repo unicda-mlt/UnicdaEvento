@@ -9,10 +9,8 @@ import com.domain.entities.UserRole
 import com.domain.entities.UserRoleEntity
 import com.domain.entities.toDomain
 import com.domain.entities.toFirestore
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
@@ -27,8 +25,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import okhttp3.internal.wait
-import java.util.Date
 
 
 class FirestoreUserRepository(
