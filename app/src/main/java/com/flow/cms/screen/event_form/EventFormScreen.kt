@@ -274,12 +274,18 @@ private fun ScreenContent(
                     value = url,
                     onValueChange = { it -> url = it },
                     textStyle = ScreenTextStyle.description,
+                    singleLine = true,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                     ),
-                    singleLine = true,
+                    placeholder = {
+                        Text(
+                            text = "Image URL",
+                            style = ScreenTextStyle.description
+                        )
+                    },
                     suffix = {
                         if (!url.isEmpty()) {
                             Column(
@@ -350,6 +356,7 @@ private fun ScreenContent(
                         value = title,
                         onValueChange = { it -> updateTitle(it) },
                         textStyle = ScreenTextStyle.title,
+                        placeholderText = "Title or Name"
                     )
                 }
 
@@ -362,6 +369,7 @@ private fun ScreenContent(
                         value = description,
                         onValueChange = { it -> updateDescription(it) },
                         textStyle = ScreenTextStyle.description,
+                        placeholderText = "Description"
                     )
                 }
             }
@@ -422,6 +430,7 @@ private fun ScreenContent(
                         value = location,
                         onValueChange = { it -> updateLocation(it) },
                         textStyle = ScreenTextStyle.description,
+                        placeholderText = "Location address"
                     )
                 }
 
@@ -483,13 +492,22 @@ private fun PlainTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (value: String) -> Unit,
-    textStyle: TextStyle
+    textStyle: TextStyle,
+    placeholderText: String? = null
 ) {
     TextField(
         modifier = modifier,
         value = value,
         onValueChange = { it -> onValueChange(it) },
         textStyle = textStyle,
+        placeholder = {
+            if (placeholderText != null) {
+                Text(
+                    text = placeholderText,
+                    style = textStyle.copy(color = textStyle.color.copy(alpha = 0.5f))
+                )
+            }
+        },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
@@ -610,7 +628,7 @@ private fun EventDetailScreen_Preview() {
             categoriesFlow = MutableStateFlow(listOf()),
             departmentIdFlow = MutableStateFlow(""),
             categoryIdFlow = MutableStateFlow(""),
-            titleFlow = MutableStateFlow("Advanced Android Development"),
+            titleFlow = MutableStateFlow(""),
             descriptionFlow = MutableStateFlow("Hands-on workshop covering Jetpack Compose, Room, and Hilt best practices."),
             locationFlow = MutableStateFlow("Santo Domingo"),
             latLngFlow = MutableStateFlow(null),
