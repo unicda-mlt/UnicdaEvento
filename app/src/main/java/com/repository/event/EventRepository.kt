@@ -1,5 +1,6 @@
 package com.repository.event
 
+import com.domain.RepoResult
 import com.domain.entities.Event
 import com.domain.entities.EventWithRefs
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,8 @@ interface EventRepository {
 
     fun observeWithRefs(id: String): Flow<EventWithRefs?>
 
-    suspend fun insert(vararg e: Event): List<String>
-    suspend fun update(vararg e: Event)
+    suspend fun insert(vararg events: Event): RepoResult<List<String>>
+    suspend fun update(vararg events: Event): RepoResult<Unit>
     suspend fun delete(vararg e: Event)
+    suspend fun getById(id: String): Event?
 }

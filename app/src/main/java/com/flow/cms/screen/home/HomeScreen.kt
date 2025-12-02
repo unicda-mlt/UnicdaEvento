@@ -51,7 +51,9 @@ fun HomeScreen (
 
         HomeButton(
             title = "Events",
-            onClick = { }
+            onClick = {
+                navController.navigate(CMSFlowRoute.EVENT_LIST.route)
+            }
         )
     }
 }

@@ -40,11 +40,40 @@ data class Event(
     val principalImage: String?,
 )
 
+data class EditableEvent(
+    val id: String? = null,
+    val departmentId: String? = null,
+    val eventCategoryId: String? = null,
+    val title: String? = null,
+    val description: String? = null,
+    val location: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val startDate: Long? = null,
+    val endDate: Long? = null,
+    val principalImage: String? = null,
+)
+
 data class EventWithRefs(
     val event: Event,
     val department: Department?,
     val eventCategory: EventCategory?
 )
+
+fun Event.toEditable(): EditableEvent =
+    EditableEvent(
+        id = id,
+        departmentId = departmentId,
+        eventCategoryId = eventCategoryId,
+        title = title,
+        description = description,
+        location = location,
+        latitude = latitude,
+        longitude = longitude,
+        startDate = startDate,
+        endDate = endDate,
+        principalImage = principalImage
+    )
 
 fun EventFirestore.toDomain(): Event = Event(
     id = id,

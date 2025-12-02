@@ -1,6 +1,7 @@
 package com.repository.event
 
 import com.di.CoroutineDispatchersModule
+import com.domain.RepoResult
 import com.domain.entities.Entity
 import com.domain.entities.Department
 import java.util.Date
@@ -132,31 +133,79 @@ class FirestoreEventRepository @Inject constructor(
         awaitClose { reg.remove() }
     }.flowOn(dispatcher)
 
-    override suspend fun insert(vararg e: Event): List<String> = withContext(dispatcher) {
-        val ids = mutableListOf<String>()
-        for (item in e) {
-            val doc = if (item.id.isBlank()) collection.document() else collection.document(item.id)
-            val toSave = item.copy(id = doc.id).toFirestore(db)
-            val exists = doc.get().await().exists()
-            if (exists) throw IllegalStateException("Event with id '${doc.id}' already exists")
-            doc.set(toSave).await()
-            ids += doc.id
-        }
-        ids
-    }
+    override suspend fun insert(vararg events: Event): RepoResult<List<String>> =
+        withContext(dispatcher) {
+            try {
+                val ids = mutableListOf<String>()
 
-    override suspend fun update(vararg e: Event) = withContext(dispatcher) {
-        for (item in e) {
-            require(item.id.isNotBlank()) { "id required for update()" }
-            val doc = collection.document(item.id)
-            doc.set(item.toFirestore(db)).await()
+                for (event in events) {
+                    val docRef = if (event.id.isBlank()) {
+                        collection.document()
+                    } else {
+                        collection.document(event.id)
+                    }
+
+                    val snapshot = docRef.get().await()
+                    if (snapshot.exists()) {
+                        throw IllegalStateException("Event with id '${docRef.id}' already exists")
+                    }
+
+                    val toSave = event.copy(id = docRef.id).toFirestore(db)
+                    docRef.set(toSave).await()
+                    ids += docRef.id
+                }
+
+                RepoResult.Success(ids)
+            } catch (e: IllegalStateException) {
+                RepoResult.Error(e.message ?: "")
+            } catch (e: Exception) {
+                RepoResult.Error("Unexpected error: ${e.message}")
+            }
         }
-    }
+
+    override suspend fun update(vararg events: Event): RepoResult<Unit> =
+        withContext(dispatcher) {
+            try {
+                for (event in events) {
+                    require(event.id.isNotBlank()) { "id required for update()" }
+
+                    val docRef = collection.document(event.id)
+                    val snapshot = docRef.get().await()
+
+                    if (!snapshot.exists()) {
+                        throw IllegalStateException("Event with id '${event.id}' does not exist")
+                    }
+
+                    val toSave = event.toFirestore(db)
+                    docRef.set(toSave).await()
+                }
+
+                RepoResult.Success(Unit)
+
+            } catch (e: IllegalStateException) {
+                RepoResult.Error(e.message ?: "")
+            } catch (e: Exception) {
+                RepoResult.Error("Unexpected error: ${e.message}")
+            }
+        }
 
     override suspend fun delete(vararg e: Event) = withContext(dispatcher) {
         for (item in e) {
             require(item.id.isNotBlank()) { "id required for delete()" }
             collection.document(item.id).delete().await()
         }
+    }
+
+    override suspend fun getById(id: String): Event? = withContext(dispatcher) {
+        require(id.isNotBlank()) { "id required" }
+        val docRef = collection.document(id)
+
+        val snap = docRef.get().await()
+        if (!snap.exists()) return@withContext null
+
+        val event = snap.toObject(EventFirestore::class.java)?.copy(id = snap.id)
+            ?: return@withContext null
+
+        event.toDomain()
     }
 }

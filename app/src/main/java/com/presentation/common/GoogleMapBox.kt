@@ -7,12 +7,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -46,6 +48,13 @@ fun GoogleMapBox(
         withFrameNanos { }
         withFrameNanos { }
         uiReady = true
+
+        cameraPositionState.animate(
+            update = CameraUpdateFactory.newLatLngZoom(
+                target,
+                zoom
+            )
+        )
     }
 
     Box(modifier) {

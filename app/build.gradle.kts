@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -84,4 +85,5 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.messaging)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.places)
 }

@@ -14,6 +14,7 @@ import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.toObject
 import com.util.normalizeText
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 
 class FirestoreDepartmentRepository(
@@ -51,6 +52,25 @@ class FirestoreDepartmentRepository(
         awaitClose { listener.remove() }
     }.flowOn(dispatcher)
 
+    override suspend fun getAll(name: String?): List<Department> = withContext(dispatcher) {
+        val query = if (name.isNullOrBlank()) {
+            collection.orderBy("nameNormalized", Query.Direction.ASCENDING)
+        } else {
+            val nameNormalized = normalizeText(name)
+
+            collection
+                .orderBy("nameNormalized", Query.Direction.ASCENDING)
+                .startAt(nameNormalized)
+                .endAt(nameNormalized + "\uf8ff")
+        }
+
+        val snapshot = query.get().await()
+
+        snapshot.documents.mapNotNull { doc ->
+            doc.toObject<Department>()?.copy(id = doc.id)
+        }
+    }
+
     override suspend fun insert(vararg departments: Department): RepoResult<Unit> {
         return try {
             for (department in departments) {
@@ -85,7 +105,6 @@ class FirestoreDepartmentRepository(
         } catch (e: Exception) {
             RepoResult.Error("Unexpected error: ${e.message}")
         }
-
     }
 
     override suspend fun update(vararg departments: Department): RepoResult<Unit> {

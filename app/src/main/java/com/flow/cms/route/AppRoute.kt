@@ -10,9 +10,18 @@ sealed class CMSFlowRoute(override val route: String, override val title: String
     data object CATEGORY_LIST : CMSFlowRoute("cms_flow_category_list", "Categories")
 
     data object EVENT_LIST : CMSFlowRoute("cms_flow_event_list", "Events")
-    data object EVENT_FORM : CMSFlowRoute("cms_flow_event_form", "Event Form")
+    data object EVENT_FORM : CMSFlowRoute("cms_flow_event_form?eventId={eventId}", "Event Form") {
+        fun create(eventId: String? = null): String {
+            return if (eventId == null)
+                "cms_flow_event_form"
+            else
+                "cms_flow_event_form?eventId=$eventId"
+        }
+    }
 
     data object SETTING : CMSFlowRoute("cms_flow_setting", "Setting")
+
+    data object CHOOSE_LOCATION : CMSFlowRoute("cms_map_location_selection", "Choose location")
 
     companion object {
         private val screens: List<CMSFlowRoute> by lazy {
@@ -23,6 +32,7 @@ sealed class CMSFlowRoute(override val route: String, override val title: String
                 EVENT_LIST,
                 EVENT_FORM,
                 SETTING,
+                CHOOSE_LOCATION,
             )
         }
 

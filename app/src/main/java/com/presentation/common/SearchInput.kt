@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ fun SearchInput(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    rounded: Boolean = true,
     placeholder: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     interactionSource: MutableInteractionSource? = null,
@@ -84,7 +86,7 @@ fun SearchInput(
                 }
             }
         },
-        shape = RoundedCornerShape(12.dp),
+        shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape,
     )
 }
 
@@ -98,6 +100,11 @@ private fun SearchInput_Preview() {
             SearchInput (
                 value = "",
                 onValueChange = {}
+            )
+            SearchInput (
+                value = "",
+                onValueChange = {},
+                rounded = false
             )
         }
     }

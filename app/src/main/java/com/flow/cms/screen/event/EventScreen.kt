@@ -1,18 +1,28 @@
-package com.flow.student.screen.discover_event
+package com.flow.cms.screen.event
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -28,45 +38,107 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.domain.entities.Event
+import com.flow.cms.route.CMSFlowRoute
+import com.flow.cms.screen.event.component.EventItem
 import com.presentation.common.Option
 import com.presentation.common.OptionPicker
 import com.presentation.common.OptionPickerButton
 import com.presentation.common.SearchInput
-import com.presentation.screen.event.EventItem
 import com.presentation.common.RangeDatePickerDialog
-import com.flow.student.route.StudentFlowRoute
 import com.presentation.theme.MyAppTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun DiscoverEventScreen(
+fun EventScreen(
     navController: NavHostController,
-    vm: DiscoverEventScreenViewModel = hiltViewModel()
+    vm: EventScreenViewModel = hiltViewModel()
 ) {
-    val params by vm.params.collectAsStateWithLifecycle()
+    val onEventClick: (String) -> Unit = remember(navController) {
+        { eventId ->
+            navController.navigate(CMSFlowRoute.EVENT_FORM.create(eventId)) {
+                launchSingleTop = true
+            }
+        }
+    }
 
+    val onAddEventClick: () -> Unit = remember(navController) {
+        {
+            navController.navigate(CMSFlowRoute.EVENT_FORM.create()) {
+                launchSingleTop = true
+            }
+        }
+    }
+    
     LaunchedEffect(Unit) {
         withFrameNanos {  }
         vm.retrieveDepartments()
         vm.retrieveCategories()
     }
 
+    Content(
+        paramsFlow = vm.params,
+        departmentsFlow = vm.departments,
+        categoriesFlow = vm.eventCategories,
+        eventsFlow = vm.events,
+        updateSearch = vm::updateSearch,
+        setRangeDate = vm::setRangeDate,
+        setDepartmentId = vm::setDepartmentId,
+        setCategoryId = vm::setCategoryId,
+        onEventClick = onEventClick,
+        onAddEventClick = onAddEventClick
+    )
+}
+
+@Composable
+private fun Content(
+    paramsFlow: ParamFlow,
+    departmentsFlow: DepartmentsFlow,
+    categoriesFlow: CategoriesFlow,
+    eventsFlow: EventsFlow,
+    updateSearch: (value: String) -> Unit,
+    setRangeDate: (fromDate: Long?, toDate: Long?) -> Unit,
+    setDepartmentId: (id: String?) -> Unit,
+    setCategoryId: (id: String?) -> Unit,
+    onEventClick: (id: String) -> Unit,
+    onAddEventClick: () -> Unit
+) {
+    val params by paramsFlow.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth().padding(
-                top = 10.dp,
-                bottom = 15.dp,
-                start = 10.dp,
-                end = 10.dp
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .padding(
+                    top = 10.dp,
+                    bottom = 15.dp,
+                    start = 10.dp,
+                    end = 10.dp
+                ),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             SearchInput(
                 value = params.search,
-                onValueChange = { vm.updateSearch(it) },
-                modifier = Modifier.fillMaxWidth()
+                onValueChange = { updateSearch(it) },
+                modifier = Modifier.weight(1f)
             )
+
+            Button(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(60.dp),
+                contentPadding = PaddingValues(0.dp),
+                shape = RoundedCornerShape(8.dp),
+                onClick = onAddEventClick
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier.size(30.dp)
+                )
+            }
         }
 
         Box(
@@ -77,8 +149,8 @@ fun DiscoverEventScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val departments by vm.departments.collectAsStateWithLifecycle()
-                val eventCategories by vm.eventCategories.collectAsStateWithLifecycle()
+                val departments by departmentsFlow.collectAsStateWithLifecycle()
+                val eventCategories by categoriesFlow.collectAsStateWithLifecycle()
 
                 val departmentOptions = remember(departments) {
                     listOf<Option<String?>>(Option(null, "All")) +
@@ -97,7 +169,7 @@ fun DiscoverEventScreen(
                         showCalendar = showRangeCalendar,
                         initialStartUtcMillis = params.fromDate,
                         initialEndUtcMillis = params.toDate,
-                        onDateSelected = vm::setRangeDate
+                        onDateSelected = setRangeDate
                     )
                 }
 
@@ -106,7 +178,7 @@ fun DiscoverEventScreen(
                     title = "Deparments",
                     options = departmentOptions,
                     selected = params.departmentId,
-                    onSelect = vm::setDepartmentId
+                    onSelect = setDepartmentId
                 )
 
                 OptionPicker(
@@ -114,7 +186,7 @@ fun DiscoverEventScreen(
                     title = "Categories",
                     options = eventCategoryOptions,
                     selected = params.categoryEventId,
-                    onSelect = vm::setCategoryId
+                    onSelect = setCategoryId
                 )
             }
         }
@@ -123,15 +195,7 @@ fun DiscoverEventScreen(
             val listState = rememberSaveable (saver = LazyListState.Saver) {
                 LazyListState()
             }
-            val events by vm.events.collectAsStateWithLifecycle(initialValue = emptyList())
-
-            val onEventClick: (String) -> Unit = remember(navController) {
-                { eventId ->
-                    navController.navigate(StudentFlowRoute.EVENT_DETAIL.create(eventId)) {
-                        launchSingleTop = true
-                    }
-                }
-            }
+            val events by eventsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
 
             LazyColumn (
                 state = listState
@@ -187,8 +251,57 @@ private fun RangeDatePickerButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun DiscoverEventScreen_Preview() {
+private fun EventEventScreen_Preview() {
+    val paramsFlow: ParamFlow = remember {
+        MutableStateFlow(
+            EventScreenViewModel.Params()
+        )
+    }
+
+    val departmentsFlow: DepartmentsFlow = remember {
+        MutableStateFlow(
+            listOf()
+        )
+    }
+
+    val categoriesFlow: CategoriesFlow = remember {
+        MutableStateFlow(
+            listOf()
+        )
+    }
+
+    val eventsFlow: EventsFlow = remember {
+        MutableStateFlow(
+            listOf(
+                Event(
+                    id = "FO8toKr8RU0YF3llPGqc",
+                    departmentId = "XkfdYTKaHANLifmg8FuB",
+                    eventCategoryId = "AsGP0B3v9g5TW5l6TnEa",
+                    title = "Intro to Kotlin",
+                    description = "Basics of Kotlin and Compose for Android. Hosted by UNICDA.",
+                    location = "Santo Domingo",
+                    latitude = 18.4861,
+                    longitude = -69.9312,
+                    startDate = 1761606000000,
+                    endDate = 1761613200000,
+                    principalImage = "https://picsum.photos/seed/1/1280/720"
+                )
+            )
+        )
+    }
+
     MyAppTheme {
-        DiscoverEventScreen(navController = rememberNavController())
+        Content(
+            paramsFlow = paramsFlow,
+            departmentsFlow = departmentsFlow,
+            categoriesFlow = categoriesFlow,
+            eventsFlow = eventsFlow,
+            updateSearch = { _, -> },
+            setRangeDate = { _, _, -> },
+            setDepartmentId = { _, -> },
+            setCategoryId = { _, -> },
+            onEventClick = { _, -> },
+            onAddEventClick = { }
+        )
     }
 }

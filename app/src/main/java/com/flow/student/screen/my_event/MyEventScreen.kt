@@ -16,7 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.presentation.common.CenterPopupMenuDialog
 import com.presentation.common.MenuOption
-import com.flow.student.screen.discover_event.component.EventItem
+import com.presentation.screen.event.EventItem
 import com.flow.student.route.StudentFlowRoute
 
 @Composable

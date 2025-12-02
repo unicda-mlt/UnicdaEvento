@@ -4,6 +4,16 @@ import java.time.format.DateTimeFormatter
 
 
 /**
+ *      2025-02-28 11:45 PM (Friday)
+ */
+val formatterFullYearMonthDayTimeDayName: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a (EEEE)")
+
+/**
+ *      2025-02-28 11:45 PM
+ */
+val formatterFullYearMonthDayTime: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")
+
+/**
  *      "October 26 · 10:00 AM, 2024"
  */
 val formatterFullMonthDayTimeYear: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM d · h:mm a, yyyy")
@@ -33,6 +43,16 @@ val formatterDayName: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE")
  */
 val formatterMeridiemTime: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
+
+fun formatEpochLongToFullYearMonthDayTimeDayName(value: Long): String {
+    val result = longToEpochLongToLocalDateTime(value)
+    return formatterFullYearMonthDayTimeDayName.format(result)
+}
+
+fun formatEpochLongToFullYearMonthDayTime(value: Long): String {
+    val result = longToEpochLongToLocalDateTime(value)
+    return formatterFullYearMonthDayTime.format(result)
+}
 
 fun formatEpochLongToFullMonthDayTimeYear(value: Long): String {
     val result = longToEpochLongToLocalDateTime(value)
